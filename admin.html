@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理面板 - 邀请码管理</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; min-height: 100vh; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+
+        .admin-login { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-card { background: #fff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 380px; text-align: center; }
+        .login-card h1 { font-size: 1.5rem; margin-bottom: 8px; }
+        .login-card p { color: #888; font-size: 0.9rem; margin-bottom: 24px; }
+        .login-card input { width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; outline: none; margin-bottom: 12px; transition: border-color 0.3s; }
+        .login-card input:focus { border-color: #667eea; }
+        .login-card button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: opacity 0.3s; }
+        .login-card button:hover { opacity: 0.9; }
+        .login-card button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .error { color: #e53935; font-size: 0.85rem; margin-bottom: 8px; min-height: 20px; }
+
+        .dashboard { display: none; }
+        .dashboard.active { display: block; }
+        .admin-login.hidden { display: none; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
+        .header h1 { font-size: 1.3rem; }
+        .header button { padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; font-size: 0.85rem; }
+        .header button:hover { background: #f5f5f5; }
+
+        .code-list { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px; }
+        .code-list h3 { font-size: 1rem; margin-bottom: 12px; }
+        .code-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border: 1px solid #f0f0f0; border-radius: 8px; margin-bottom: 8px; }
+        .code-value { font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: 700; color: #333; }
+        .code-name { font-size: 0.85rem; color: #888; margin-top: 2px; }
+        .empty { text-align: center; color: #aaa; padding: 30px; font-size: 0.95rem; }
+
+        .hint-box { background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+        .hint-box h4 { color: #e65100; margin-bottom: 8px; }
+        .hint-box p { font-size: 0.9rem; color: #666; line-height: 1.6; }
+        .hint-box code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-login" id="adminLogin">
+        <div class="login-card">
+            <h1>🔐 管理面板</h1>
+            <p>输入管理员密码登录</p>
+            <input type="password" id="adminPwdInput" placeholder="管理员密码" onkeydown="if(event.key==='Enter')adminLogin()">
+            <div class="error" id="adminError"></div>
+            <button onclick="adminLogin()" id="adminLoginBtn">登录</button>
+        </div>
+    </div>
+
+    <div class="dashboard" id="adminDashboard">
+        <div class="container">
+            <div class="header">
+                <h1>🔐 邀请码管理</h1>
+                <button onclick="adminLogout()">退出登录</button>
+            </div>
+
+            <div class="hint-box">
+                <h4>💡 如何管理邀请码</h4>
+                <p>邀请码直接写在代码文件 <code>api/verify.js</code> 中。<br>
+                修改后重新部署即可生效。添加/删除邀请码需要编辑代码。</p>
+            </div>
+
+            <div class="code-list">
+                <h3>📋 当前有效邀请码</h3>
+                <div id="codeList"><div class="empty">加载中...</div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    var adminPwd = '';
+
+    function adminLogin(){
+        var pwd = document.getElementById('adminPwdInput').value.trim();
+        if(!pwd){ document.getElementById('adminError').textContent='请输入密码'; return; }
+        adminPwd = pwd;
+        var btn = document.getElementById('adminLoginBtn');
+        btn.disabled = true; btn.textContent = '验证中...';
+        document.getElementById('adminError').textContent = '';
+        fetch('/api/admin?pwd=' + encodeURIComponent(pwd))
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+            if(data.codes){
+                document.getElementById('adminLogin').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.add('active');
+                localStorage.setItem('adminPwd', pwd);
+                renderCodes(data.codes);
+            } else {
+                document.getElementById('adminError').textContent = data.error || '密码错误';
+            }
+            btn.disabled = false; btn.textContent = '登录';
+        }).catch(function(){
+            document.getElementById('adminError').textContent = '网络错误';
+            btn.disabled = false; btn.textContent = '登录';
+        });
+    }
+
+    function adminLogout(){
+        adminPwd = '';
+        localStorage.removeItem('adminPwd');
+        document.getElementById('adminLogin').classList.remove('hidden');
+        document.getElementById('adminDashboard').classList.remove('active');
+        document.getElementById('adminPwdInput').value = '';
+    }
+
+    function renderCodes(codes){
+        var el = document.getElementById('codeList');
+        if(!codes.length){ el.innerHTML='<div class="empty">暂无邀请码</div>'; return; }
+        el.innerHTML = codes.map(function(c){
+            return '<div class="code-item"><div><div class="code-value">'+c.code+'</div>'+(c.name?'<div class="code-name">'+c.name+'</div>':'')+'</div></div>';
+        }).join('');
+    }
+
+    (function(){
+        var saved = localStorage.getItem('adminPwd');
+        if(saved){
+            adminPwd = saved;
+            fetch('/api/admin', {headers:{'X-Admin-Password':saved}})
+            .then(function(r){ return r.json(); })
+            .then(function(data){
+                if(data.codes){
+                    document.getElementById('adminLogin').classList.add('hidden');
+                    document.getElementById('adminDashboard').classList.add('active');
+                    renderCodes(data.codes);
+                } else {
+                    localStorage.removeItem('adminPwd');
+                }
+            }).catch(function(){});
+        }
+    })();
+    </script>
+</body>
+</html>
