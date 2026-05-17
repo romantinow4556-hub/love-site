@@ -891,6 +891,10 @@
     function lsGet(key){ return localStorage.getItem(storagePrefix + key); }
     function lsSet(key, val){ localStorage.setItem(storagePrefix + key, val); }
 
+    // 邀请码验证（修改此数组即可管理邀请码）
+    var _vc=['zhangandcheng'];
+    function _ck(c){return _vc.indexOf(c)!==-1;}
+
     function doLogin(){
         var user = document.getElementById('loginUser').value.trim();
         var pass = document.getElementById('loginPass').value.trim();
@@ -898,32 +902,16 @@
         if(!user){ document.getElementById('loginError').textContent='请输入你的名字'; return; }
         if(!pass){ document.getElementById('loginError').textContent='请输入房间密码'; return; }
         if(!code){ document.getElementById('loginError').textContent='请输入邀请码'; return; }
-        var btn = document.getElementById('loginBtn');
-        btn.disabled = true; btn.textContent = '验证中...';
-        document.getElementById('loginError').textContent = '';
-        fetch('/api/verify', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({code: code})
-        }).then(function(r){ return r.json(); }).then(function(data){
-            if(data.ok){
-                storagePrefix = 'love_data_' + pass + '_';
-                localStorage.setItem('lastLoginUser', user);
-                localStorage.setItem('lastLoginPass', pass);
-                localStorage.setItem('lastLoginCode', code);
-                document.getElementById('login-page').style.display='none';
-                document.getElementById('main-page').style.display='block';
-                document.getElementById('loading-screen').classList.remove('hidden');
-                setTimeout(function(){ document.getElementById('loading-screen').classList.add('hidden'); }, 1800);
-                initAfterLogin();
-            } else {
-                document.getElementById('loginError').textContent = data.error || '邀请码无效，请联系管理员';
-            }
-            btn.disabled = false; btn.textContent = '💕 进入我们的小屋';
-        }).catch(function(){
-            document.getElementById('loginError').textContent = '网络错误，请重试';
-            btn.disabled = false; btn.textContent = '💕 进入我们的小屋';
-        });
+        if(!_ck(code)){ document.getElementById('loginError').textContent='邀请码无效，请联系管理员'; return; }
+        storagePrefix = 'love_data_' + pass + '_';
+        localStorage.setItem('lastLoginUser', user);
+        localStorage.setItem('lastLoginPass', pass);
+        localStorage.setItem('lastLoginCode', code);
+        document.getElementById('login-page').style.display='none';
+        document.getElementById('main-page').style.display='block';
+        document.getElementById('loading-screen').classList.remove('hidden');
+        setTimeout(function(){ document.getElementById('loading-screen').classList.add('hidden'); }, 1800);
+        initAfterLogin();
     }
 
     function doLogout(){
@@ -1324,23 +1312,12 @@
         if(lastUser) document.getElementById('loginUser').value = lastUser;
         if(lastPass) document.getElementById('loginPass').value = lastPass;
         if(lastCode) document.getElementById('loginCode').value = lastCode;
-        if(lastUser && lastPass && lastCode){
-            var ctrl = new AbortController();
-            var timer = setTimeout(function(){ ctrl.abort(); }, 8000);
-            fetch('/api/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:lastCode}),signal:ctrl.signal})
-            .then(function(r){return r.json();}).then(function(data){
-                clearTimeout(timer);
-                if(data.ok){
-                    storagePrefix = 'love_data_' + lastPass + '_';
-                    document.getElementById('login-page').style.display='none';
-                    document.getElementById('main-page').style.display='block';
-                    setTimeout(function(){ document.getElementById('loading-screen').classList.add('hidden'); }, 1800);
-                    initAfterLogin();
-                }
-            }).catch(function(){
-                clearTimeout(timer);
-                // 网络失败时保持登录页显示，用户可手动登录
-            });
+        if(lastUser && lastPass && lastCode && _ck(lastCode)){
+            storagePrefix = 'love_data_' + lastPass + '_';
+            document.getElementById('login-page').style.display='none';
+            document.getElementById('main-page').style.display='block';
+            setTimeout(function(){ document.getElementById('loading-screen').classList.add('hidden'); }, 1800);
+            initAfterLogin();
         }
     })();
     </script>
