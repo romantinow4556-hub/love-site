@@ -67,6 +67,7 @@ nav .nav-links a:hover { transform: translateY(-1px) scale(1.05); }
 .nav-guestbook { background: linear-gradient(135deg,#a1c4fd,#c2e9fb); color: #2d4a7a; box-shadow: 0 2px 8px rgba(161,196,253,0.3); }
 .nav-period { background: linear-gradient(135deg,#f093fb,#f5576c); color: #fff; box-shadow: 0 2px 8px rgba(240,147,251,0.3); }
 .nav-bind { background: linear-gradient(135deg,#667eea,#764ba2); color: #fff; box-shadow: 0 2px 8px rgba(102,126,234,0.3); }
+.nav-logout { background: linear-gradient(135deg,#ef5350,#d32f2f); color: #fff; box-shadow: 0 2px 8px rgba(239,83,80,0.3); }
 .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
 .hamburger span { width: 24px; height: 2.5px; background: var(--pink-deep); border-radius: 2px; transition: all 0.3s; }
 
@@ -77,29 +78,225 @@ nav .nav-links a:hover { transform: translateY(-1px) scale(1.05); }
 .section-subtitle { text-align: center; font-family: 'KaiTi', 'STKaiti', 'SimSun', serif; font-size: 1.3rem; color: var(--text-light); margin-bottom: 40px; }
 
 /* ============ Hero ============ */
-.hero {
-    text-align: center; padding: 60px 20px; position: relative;
-    background: linear-gradient(135deg, rgba(255,105,180,0.08), rgba(233,30,140,0.05));
-    border-radius: 30px; margin-bottom: 40px; overflow: hidden;
+.hero-section {
+    position: relative; border-radius: 32px; overflow: hidden;
+    background: linear-gradient(145deg, #fff5f7, #ffe8ee, #ffdae4, #ffecf0);
+    margin-bottom: 40px; padding: 60px 30px;
+    box-shadow: 0 8px 40px rgba(233,30,140,0.12);
 }
-.hero-decoration { position: absolute; font-size: 15rem; opacity: 0.04; color: var(--pink-deep); top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
-.hero .subtitle-top { font-family: 'KaiTi', 'STKaiti', 'SimSun', serif; font-size: 1.6rem; color: var(--pink-dark); margin-bottom: 10px; letter-spacing: 2px; }
-.hero h1 { font-family: 'KaiTi', 'STKaiti', 'SimSun', serif; font-size: 4.8rem; color: var(--pink-deep); margin-bottom: 15px; text-shadow: 0 2px 10px rgba(233,30,140,0.2); }
-.hero .couple-names { font-family: 'KaiTi', 'STKaiti', 'SimSun', serif; font-size: 2.6rem; color: var(--gold); margin-bottom: 20px; }
-.hero .together-time { font-size: 1.2rem; color: var(--text-light); margin-bottom: 30px; }
-#togetherTimer { font-size: 1.5rem; font-weight: 700; color: var(--pink-deep); }
+
+/* 浮动爱心背景 */
+.hero-floating {
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+}
+.hero-floating span {
+    position: absolute; font-size: 1.2rem; animation: floatUp linear infinite; opacity: 0.2;
+}
+.hero-floating span:nth-child(1)  { left: 5%;  animation-duration: 10s; animation-delay: 0s; }
+.hero-floating span:nth-child(2)  { left: 15%; animation-duration: 12s; animation-delay: 1s; font-size: 1rem; }
+.hero-floating span:nth-child(3)  { left: 25%; animation-duration: 9s;  animation-delay: 2s; }
+.hero-floating span:nth-child(4)  { left: 35%; animation-duration: 11s; animation-delay: 0.5s; font-size: 0.9rem; }
+.hero-floating span:nth-child(5)  { left: 45%; animation-duration: 13s; animation-delay: 3s; }
+.hero-floating span:nth-child(6)  { left: 55%; animation-duration: 10s; animation-delay: 1.5s; font-size: 1.1rem; }
+.hero-floating span:nth-child(7)  { left: 65%; animation-duration: 12s; animation-delay: 0.8s; }
+.hero-floating span:nth-child(8)  { left: 75%; animation-duration: 9s;  animation-delay: 2.5s; font-size: 0.8rem; }
+.hero-floating span:nth-child(9)  { left: 85%; animation-duration: 11s; animation-delay: 1.2s; }
+.hero-floating span:nth-child(10) { left: 92%; animation-duration: 10s; animation-delay: 3.5s; }
+@keyframes floatUp {
+    0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.2; }
+    50%  { transform: translateY(-50px) rotate(180deg) scale(1.1); opacity: 0.3; }
+    100% { transform: translateY(-100px) rotate(360deg) scale(0.8); opacity: 0; }
+}
+
+.hero-content { position: relative; z-index: 1; text-align: center; }
+.hero-subtitle {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 1.3rem; color: var(--pink-dark); letter-spacing: 3px;
+    margin-bottom: 8px; font-style: italic;
+}
+.hero-title {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 4.2rem; color: var(--pink-deep);
+    margin-bottom: 12px; text-shadow: 0 2px 12px rgba(233,30,140,0.15);
+    letter-spacing: 4px;
+}
+.hero-title::after {
+    content: ''; display: block; width: 80px; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--pink-deep), transparent);
+    margin: 12px auto 0; border-radius: 2px;
+}
+.hero-couple {
+    display: flex; justify-content: center; align-items: center; gap: 20px;
+    margin: 16px 0 20px;
+}
+.hero-couple .name {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 2.2rem; color: var(--gold); letter-spacing: 2px;
+}
+.hero-couple .heart-icon {
+    font-size: 1.8rem; animation: heartPulse 1.5s ease-in-out infinite;
+}
+@keyframes heartPulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* 时间轴日期 */
+.hero-timeline {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin: 20px auto; padding: 12px 24px;
+    background: rgba(255,255,255,0.6); backdrop-filter: blur(10px);
+    border-radius: 50px; max-width: 400px;
+    box-shadow: 0 2px 16px rgba(233,30,140,0.08);
+}
+.hero-timeline .tl-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.hero-timeline .tl-dot.start { background: var(--pink-dark); }
+.hero-timeline .tl-dot.end { background: var(--pink-deep); box-shadow: 0 0 8px rgba(233,30,140,0.4); }
+.hero-timeline .tl-line {
+    flex: 1; height: 2px; max-width: 60px;
+    background: linear-gradient(90deg, var(--pink-dark), var(--pink-deep));
+}
+.hero-timeline .tl-date {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 0.95rem; color: var(--text-dark); white-space: nowrap;
+}
+
+/* 在一起计时卡片 */
+.hero-timer-wrap {
+    margin: 16px auto 0; display: inline-block;
+    background: rgba(255,255,255,0.7); backdrop-filter: blur(12px);
+    border-radius: 20px; padding: 16px 32px;
+    box-shadow: 0 4px 24px rgba(233,30,140,0.08);
+}
+.hero-timer-label {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 0.95rem; color: var(--text-light); margin-bottom: 6px; letter-spacing: 1px;
+}
+#togetherTimer {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 1.6rem; font-weight: 700; color: var(--pink-deep);
+    letter-spacing: 1px;
+}
+.hero-date-setting {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-bottom: 8px;
+}
+.hero-date-setting .hds-label {
+    font-size: 0.75rem; color: var(--text-light);
+}
+.hero-date-setting .hds-input {
+    padding: 4px 8px; border: 1.5px solid var(--pink-light); border-radius: 8px;
+    font-size: 0.8rem; color: var(--text-dark);
+    background: rgba(255,255,255,0.7); outline: none; cursor: pointer;
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+.hero-date-setting .hds-input:focus { border-color: var(--pink-dark); }
+
+/* 滚动提示 */
+.scroll-hint {
+    text-align: center; font-size: 1.3rem; color: var(--pink-mid);
+    cursor: pointer; margin-top: 20px;
+    animation: bounceHint 2s ease-in-out infinite;
+}
+@keyframes bounceHint {
+    0%,100% { transform: translateY(0); opacity: 0.6; }
+    50% { transform: translateY(8px); opacity: 1; }
+}
 
 /* ============ 仪表盘 ============ */
-.dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 20px; margin-bottom: 30px; }
-.dash-card { background: rgba(255,255,255,0.85); border-radius: 18px; padding: 24px; text-align: center; box-shadow: var(--shadow-sm); transition: transform 0.3s; }
-.dash-card:hover { transform: translateY(-4px); }
-.dash-card .dash-icon { font-size: 2.2rem; margin-bottom: 8px; }
-.dash-card .dash-label { font-size: 0.9rem; color: var(--text-light); margin-bottom: 4px; }
-.dash-date-card .today-date { font-family: 'KaiTi', 'STKaiti', 'SimSun', serif; font-size: 2.4rem; color: var(--pink-deep); }
-.dash-date-card .today-solar { font-size: 0.9rem; color: var(--text-light); }
-.dash-next-anniv .anniv-name { font-size: 1rem; color: var(--text-dark); margin-bottom: 4px; }
-.dash-next-anniv .anniv-days { font-family: 'KaiTi', 'STKaiti', 'SimSun', serif; font-size: 3.5rem; color: var(--pink-deep); line-height: 1; }
-.dash-next-anniv .anniv-unit { font-size: 0.85rem; color: var(--text-light); }
+.dash-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px; margin-bottom: 30px;
+}
+.dash-card {
+    background: rgba(255,255,255,0.82); backdrop-filter: blur(8px);
+    border-radius: 24px; padding: 28px 20px; text-align: center;
+    box-shadow: 0 2px 20px rgba(233,30,140,0.06);
+    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    border: 1px solid rgba(255,255,255,0.5);
+}
+.dash-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 32px rgba(233,30,140,0.12);
+}
+.dash-card .dash-icon {
+    font-size: 2rem; margin-bottom: 10px; display: block;
+}
+.dash-card .dash-label {
+    font-size: 0.85rem; color: var(--text-light); margin-bottom: 6px;
+    letter-spacing: 1px;
+}
+.dash-card .dash-number {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 3.2rem; font-weight: 700; color: var(--pink-deep);
+    line-height: 1.1;
+}
+.dash-card .dash-unit {
+    font-size: 0.85rem; color: var(--text-light); margin-top: 2px;
+}
+
+/* 日期卡片 */
+.dash-date-card { grid-column: 1; }
+#todayDate {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 2.6rem; font-weight: 700; color: var(--pink-deep);
+    line-height: 1.2;
+}
+#todayWeekday {
+    font-size: 1rem; color: var(--text-light); margin-top: 2px;
+}
+/* 纪念日卡片 */
+.dash-anniv { grid-column: 2; }
+#nextAnnivDays {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 3.8rem; font-weight: 700; color: var(--pink-deep);
+    line-height: 1;
+}
+.dash-anniv .anniv-name {
+    font-size: 0.9rem; color: var(--gold); margin-top: 4px;
+    font-family: 'KaiTi', 'STKaiti', 'SimSun', serif;
+}
+.dash-anniv .dash-date-input {
+    margin-top: 10px; padding: 6px 12px; border: 1.5px solid var(--pink-light);
+    border-radius: 12px; font-size: 0.8rem; color: var(--text-dark);
+    background: rgba(255,255,255,0.8); outline: none; cursor: pointer;
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+.dash-anniv .dash-date-input:focus { border-color: var(--pink-dark); }
+/* 倒计时 */
+.dash-countdown { grid-column: 3; }
+
+/* 宽引用卡片（占满一行） */
+.dash-quote-card { grid-column: 1 / -1; padding: 20px 28px; }
+.quote-text {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 1.15rem; color: var(--text-dark); font-style: italic;
+    line-height: 1.6; margin-bottom: 4px;
+}
+.quote-author {
+    font-size: 0.85rem; color: var(--text-light);
+}
+
+/* 快速笔记卡片（占满一行） */
+.dash-note { grid-column: 1 / -1; }
+.dash-note .dash-textarea {
+    width: 100%; padding: 12px 16px; border: 2px solid var(--pink-light);
+    border-radius: 14px; font-size: 0.95rem; color: var(--text-dark);
+    background: rgba(255,255,255,0.6); outline: none; resize: vertical;
+    min-height: 60px; margin: 8px 0; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+.dash-note .dash-textarea:focus { border-color: var(--pink-dark); }
+.dash-note .dash-btn {
+    padding: 8px 24px; border: none; border-radius: 20px;
+    background: linear-gradient(135deg, var(--pink-dark), var(--pink-deep));
+    color: #fff; font-size: 0.9rem; cursor: pointer;
+    transition: all 0.3s; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+.dash-note .dash-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.dash-notes-list { margin-top: 12px; text-align: left; }
+.dash-notes-list .qn-card { background: var(--cream); }
 
 /* ============ 便签 ============ */
 .quick-notes { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 14px; margin-bottom: 20px; }
@@ -150,6 +347,9 @@ nav .nav-links a:hover { transform: translateY(-1px) scale(1.05); }
 .polaroid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; display: block; background: #f5f5f5; }
 .polaroid .photo-caption { font-size: 0.9rem; color: var(--text-light); text-align: center; margin-top: 8px; min-height: 20px; outline: none; }
 .polaroid .photo-date { font-size: 0.75rem; color: #bbb; text-align: center; }
+.polaroid-caption { font-size: 0.9rem; color: var(--text-light); text-align: center; margin-top: 8px; }
+.polaroid-upload-btn { display: block; text-align: center; font-size: 0.8rem; color: var(--pink-mid); cursor: pointer; margin-top: 4px; }
+.polaroid-upload-btn:hover { color: var(--pink-dark); }
 .upload-btn { background: rgba(255,255,255,0.5); border: 2px dashed var(--pink-mid); border-radius: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s; min-height: 200px; font-size: 2rem; color: var(--pink-mid); }
 .upload-btn:hover { background: rgba(255,255,255,0.8); border-color: var(--pink-dark); color: var(--pink-dark); }
 .upload-btn span { font-size: 0.85rem; margin-top: 6px; }
@@ -225,20 +425,148 @@ nav .nav-links a:hover { transform: translateY(-1px) scale(1.05); }
 .hobby-form input:focus { border-color: var(--pink-dark); }
 .hobby-form button { background: linear-gradient(135deg,var(--pink-dark),var(--pink-deep)); color: var(--white); border: none; border-radius: 12px; padding: 10px 16px; font-size: 1rem; cursor: pointer; }
 
-/* ============ 经期 ============ */
-.period-card { background: rgba(255,255,255,0.85); border-radius: 18px; padding: 24px; box-shadow: var(--shadow-sm); text-align: center; margin-bottom: 14px; }
-.period-card .p-label { font-size: 0.9rem; color: var(--text-light); }
-.period-card .p-value { font-family: 'KaiTi', 'STKaiti', 'SimSun', serif; font-size: 1.8rem; color: var(--pink-deep); }
-.period-card .p-sub { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; }
-.period-info { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-.period-cal { width: 100%; border-collapse: collapse; margin-top: 14px; }
-.period-cal th { font-size: 0.9rem; color: var(--text-light); padding: 8px 4px; font-weight: 400; }
-.period-cal td { text-align: center; padding: 8px 4px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
-.period-cal td:hover { background: var(--pink-light); }
-.period-cal td.today { background: var(--pink-dark); color: var(--white); font-weight: 700; border-radius: 50%; }
-.period-cal td.period-day { background: #fce4ec; color: var(--pink-deep); }
-.period-cal td.predict { background: #fff3e0; color: #e65100; }
-.period-cal td.empty { visibility: hidden; }
+/* ============ 经期记录 ============ */
+.period-section { max-width: 720px; margin: 0 auto; }
+
+/* 设置卡片 */
+.period-settings {
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+    border-radius: 20px; padding: 24px 28px; margin-bottom: 20px;
+    box-shadow: 0 2px 20px rgba(233,30,140,0.06);
+    border: 1px solid rgba(255,255,255,0.5);
+}
+.period-settings .ps-row {
+    display: flex; gap: 20px; align-items: center;
+}
+.period-settings .ps-item {
+    flex: 1; text-align: center;
+}
+.period-settings .ps-item .ps-label {
+    font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px;
+}
+.period-settings .ps-item .ps-value {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 1.3rem; font-weight: 700; color: var(--pink-deep);
+}
+.period-settings .ps-item .ps-input {
+    margin-top: 6px; padding: 6px 10px; border: 1.5px solid var(--pink-light);
+    border-radius: 10px; font-size: 0.85rem; color: var(--text-dark);
+    background: rgba(255,255,255,0.8); outline: none; cursor: pointer;
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; text-align: center;
+}
+.period-settings .ps-item .ps-input:focus { border-color: var(--pink-dark); }
+.period-settings .ps-item .ps-input-num {
+    width: 70px;
+}
+.period-settings .ps-btn {
+    padding: 8px 18px; border: none; border-radius: 18px;
+    background: linear-gradient(135deg,var(--pink-dark),var(--pink-deep));
+    color: #fff; font-size: 0.85rem; cursor: pointer; white-space: nowrap;
+    transition: all 0.3s; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+.period-settings .ps-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* 阶段状态卡 */
+.period-status {
+    display: flex; gap: 16px; margin-bottom: 20px;
+}
+.period-status .ps-card {
+    flex: 1; background: rgba(255,255,255,0.85);
+    border-radius: 18px; padding: 20px; text-align: center;
+    box-shadow: 0 2px 16px rgba(233,30,140,0.06);
+    border: 1px solid rgba(255,255,255,0.5);
+}
+.period-status .ps-card .psc-icon { font-size: 2rem; margin-bottom: 6px; }
+.period-status .ps-card .psc-label { font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px; }
+.period-status .ps-card .psc-value {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 1.6rem; font-weight: 700; line-height: 1.2;
+}
+.period-status .ps-card .psc-sub { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; }
+
+/* 图例 */
+.period-legend {
+    display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.period-legend .pl-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.8rem; color: var(--text-light);
+}
+.period-legend .pl-dot {
+    width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+}
+.pl-menstrual .pl-dot { background: #f48fb1; }
+.pl-follicular .pl-dot { background: #ce93d8; }
+.pl-ovulation .pl-dot { background: #ffcc80; }
+.pl-luteal .pl-dot { background: #80cbc4; }
+
+/* 月份导航 */
+.period-month-nav {
+    display: flex; justify-content: center; align-items: center; gap: 20px;
+    margin-bottom: 16px;
+}
+.period-month-nav .pm-title {
+    font-family: 'Georgia', 'KaiTi', 'STKaiti', serif;
+    font-size: 1.4rem; font-weight: 700; color: var(--pink-deep);
+    min-width: 140px; text-align: center;
+}
+.period-month-nav .pm-btn {
+    background: rgba(255,255,255,0.8); border: 1.5px solid var(--pink-light);
+    border-radius: 50%; width: 36px; height: 36px;
+    font-size: 1.1rem; cursor: pointer; transition: all 0.3s;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--pink-dark);
+}
+.period-month-nav .pm-btn:hover {
+    background: var(--pink-light); border-color: var(--pink-dark);
+}
+
+/* 日历网格 */
+.period-calendar {
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+    border-radius: 14px; padding: 12px;
+    box-shadow: 0 2px 20px rgba(233,30,140,0.06);
+}
+.period-calendar .pc-weekdays {
+    display: grid; grid-template-columns: repeat(7,1fr); gap: 2px;
+    margin-bottom: 4px;
+}
+.period-calendar .pc-weekdays span {
+    text-align: center; font-size: 0.7rem; font-weight: 600;
+    color: var(--text-light); padding: 4px 0;
+}
+.period-calendar .pc-grid {
+    display: grid; grid-template-columns: repeat(7,1fr); gap: 2px;
+}
+.period-calendar .pc-day {
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; font-size: 0.75rem; cursor: default;
+    min-height: 30px; position: relative;
+}
+.period-calendar .pc-day .pc-num {
+    font-weight: 600; font-size: 0.75rem;
+    line-height: 1; z-index: 1;
+}
+.period-calendar .pc-day .pc-tag {
+    display: none;
+}
+.period-calendar .pc-day.empty { background: transparent; cursor: default; }
+.period-calendar .pc-day.today-mark {
+    box-shadow: inset 0 0 0 2px var(--pink-deep);
+    font-weight: 700;
+}
+/* 阶段颜色 */
+.period-calendar .pc-day.pc-menstrual { background: #fce4ec; }
+.period-calendar .pc-day.pc-menstrual .pc-num { color: #c62828; }
+.period-calendar .pc-day.pc-follicular { background: #f3e5f5; }
+.period-calendar .pc-day.pc-follicular .pc-num { color: #6a1b9a; }
+.period-calendar .pc-day.pc-ovulation { background: #fff8e1; }
+.period-calendar .pc-day.pc-ovulation .pc-num { color: #e65100; }
+.period-calendar .pc-day.pc-luteal { background: #e0f2f1; }
+.period-calendar .pc-day.pc-luteal .pc-num { color: #00695c; }
+.period-calendar .pc-day.pc-future { background: transparent; }
+.period-calendar .pc-day.pc-future .pc-num { color: var(--text-light); }
 
 /* ============ 留言板 ============ */
 .guestbook-form { background: rgba(255,255,255,0.85); border-radius: 18px; padding: 24px; box-shadow: var(--shadow-sm); margin-bottom: 20px; }
@@ -304,11 +632,19 @@ footer .footer-warning { margin-top: 12px; font-size: 0.9rem; color: #ccc; }
     nav .nav-links.open { display: flex; }
     nav .nav-links a { padding: 10px 16px; text-align: center; border-radius: 12px; margin: 0 8px; font-size: 0.95rem; }
     .hamburger { display: flex; }
-    .hero h1 { font-size: 2.8rem; }
-    .hero .couple-names { font-size: 1.6rem; }
+    .hero-title { font-size: 2.8rem; }
+    .hero-couple .name { font-size: 1.6rem; }
+    .hero-section { padding: 40px 20px; }
+    .hero-timeline { padding: 10px 16px; max-width: 90%; }
+    .hero-timer-wrap { padding: 12px 20px; }
+    #togetherTimer { font-size: 1.2rem; }
     .section-title { font-size: 2.1rem; }
-    .dashboard-grid { grid-template-columns: 1fr; }
-    .period-info { grid-template-columns: 1fr; }
+    .dash-grid { grid-template-columns: 1fr 1fr; }
+    .dash-date-card { grid-column: 1; }
+    .dash-anniv { grid-column: 2; }
+    .dash-countdown { grid-column: 1 / -1; }
+    .dash-quote-card { grid-column: 1 / -1; }
+    .dash-note { grid-column: 1 / -1; }
     .timeline::before { left: 20px; }
     .timeline-item { width: calc(100% - 50px); margin-left: 50px !important; }
     .timeline-item .timeline-dot { left: -34px !important; right: auto !important; }
@@ -322,6 +658,19 @@ footer .footer-warning { margin-top: 12px; font-size: 0.9rem; color: #ccc; }
     .hobby-grid { grid-template-columns: repeat(auto-fill, minmax(170px,1fr)); }
     .hobby-dual { grid-template-columns: 1fr; }
     .dream-dual { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+    .hero-title { font-size: 2.2rem; }
+    .hero-subtitle { font-size: 1rem; }
+    .hero-couple .name { font-size: 1.4rem; }
+    .hero-timeline { flex-wrap: wrap; gap: 6px; max-width: 95%; }
+    .hero-timeline .tl-date { font-size: 0.8rem; white-space: normal; }
+    #togetherTimer { font-size: 1rem; }
+    .dash-grid { grid-template-columns: 1fr; }
+    .dash-date-card, .dash-anniv, .dash-countdown { grid-column: 1; }
+    .dash-card .dash-number { font-size: 2.6rem; }
+    #nextAnnivDays { font-size: 3rem; }
+    .hero-section { padding: 30px 16px; border-radius: 24px; }
 }
 
 /* ============ 登录页 ============ */
@@ -412,6 +761,67 @@ footer .footer-warning { margin-top: 12px; font-size: 0.9rem; color: #ccc; }
 .bind-status { text-align: center; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 0.95rem; }
 .bind-status.bound { background: #f0fdf4; color: #166534; border: 1px solid #86efac; }
 .bind-status.unbound { background: #fff7ed; color: #9a3412; border: 1px solid #fdba74; }
+
+/* 灯箱 */
+.lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10002; display: none; justify-content: center; align-items: center; flex-direction: column; }
+.lightbox.show { display: flex; }
+.lightbox-img { max-width: 90%; max-height: 75vh; object-fit: contain; border-radius: 8px; }
+.lightbox-close { position: absolute; top: 16px; right: 20px; background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer; z-index: 10; }
+.lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 1.8rem; cursor: pointer; padding: 12px 16px; border-radius: 8px; }
+.lightbox-prev { left: 16px; }
+.lightbox-next { right: 16px; }
+.lightbox-caption { color: #fff; margin-top: 12px; font-size: 1rem; text-align: center; }
+.lightbox-counter { color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 4px; }
+.lightbox-autoplay { margin-top: 10px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 18px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; }
+
+/* 留言卡片 */
+.message-card { background: rgba(255,255,255,0.85); border-radius: 16px; padding: 18px; box-shadow: var(--shadow-sm); position: relative; animation: messageIn 0.4s ease; }
+.msg-delete { position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 1.2rem; color: #ccc; cursor: pointer; }
+.msg-delete:hover { color: #e53935; }
+.msg-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.msg-name { font-size: 0.95rem; color: var(--pink-dark); font-weight: 700; }
+.msg-time { font-size: 0.8rem; color: var(--text-light); }
+.msg-content { font-size: 1rem; color: var(--text-dark); line-height: 1.6; }
+
+/* 音乐上传 */
+.music-info { position: absolute; bottom: 60px; right: 0; background: rgba(255,255,255,0.9); padding: 6px 12px; border-radius: 12px; font-size: 0.8rem; color: var(--text-light); white-space: nowrap; box-shadow: var(--shadow-sm); }
+.music-upload-label { position: absolute; bottom: 0; right: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--pink-mid); color: #fff; font-size: 0.7rem; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+
+/* 时间线编辑提示 */
+.timeline-edit-hint { text-align: center; font-size: 0.85rem; color: var(--text-light); margin-bottom: 16px; }
+.timeline-emoji { position: absolute; top: 24px; font-size: 1.5rem; }
+.timeline-item:nth-child(odd) .timeline-emoji { right: -50px; }
+.timeline-item:nth-child(even) .timeline-emoji { left: -50px; }
+.timeline-photo-wrap { position: relative; cursor: pointer; margin-top: 10px; }
+.upload-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(0,0,0,0.4); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; }
+.timeline-photo-wrap:hover .upload-hint { opacity: 1; }
+
+/* 经期阶段 */
+.period-stage { margin-bottom: 16px; }
+.period-quick { text-align: center; margin-top: 16px; }
+.phase-legend { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.phase-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--text-light); }
+.phase-dot { width: 12px; height: 12px; border-radius: 50%; }
+.phase-menstrual .phase-dot { background: #e53935; }
+.phase-follicular .phase-dot { background: #4caf50; }
+.phase-ovulation .phase-dot { background: #ff9800; }
+.phase-luteal .phase-dot { background: #9c27b0; }
+.current-phase-cards { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 16px; }
+
+/* 滚动提示 */
+.scroll-hint { font-size: 1.5rem; color: var(--pink-mid); cursor: pointer; animation: bounce 2s infinite; margin-top: 10px; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+.date-line { font-size: 1.1rem; color: var(--text-light); margin-bottom: 10px; }
+
+/* 表单 */
+.data-form { background: rgba(255,255,255,0.85); border-radius: 18px; padding: 24px; box-shadow: var(--shadow-sm); margin-bottom: 20px; }
+.form-row { display: flex; gap: 10px; margin-bottom: 10px; }
+.form-row input, .form-row select { flex: 1; padding: 10px 14px; border: 2px solid var(--pink-light); border-radius: 12px; font-size: 0.95rem; color: var(--text-dark); background: var(--white); outline: none; }
+.form-row input:focus { border-color: var(--pink-dark); }
+.data-form textarea { width: 100%; padding: 12px 16px; border: 2px solid var(--pink-light); border-radius: 12px; font-family: 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', 'SimSun', sans-serif; font-size: 1.05rem; color: var(--text-dark); background: var(--white); outline: none; min-height: 80px; resize: vertical; margin-bottom: 10px; }
+.data-form textarea:focus { border-color: var(--pink-dark); }
+.form-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.data-list { display: grid; gap: 14px; }
 </style>
 </head>
 <body>
@@ -510,12 +920,11 @@ footer .footer-warning { margin-top: 12px; font-size: 0.9rem; color: #ccc; }
             <li><a href="#dashboard" class="nav-story" onclick="closeMenu()">🏠 首页</a></li>
             <li><a href="#story" class="nav-story" onclick="closeMenu()">📖 故事</a></li>
             <li><a href="#gallery" class="nav-gallery" onclick="closeMenu()">📸 相册</a></li>
-            <li><a href="#countdown" class="nav-countdown" onclick="closeMenu()">💕 计时</a></li>
             <li><a href="#diary" class="nav-diary" onclick="closeMenu()">📝 日记</a></li>
             <li><a href="#dream" class="nav-dream" onclick="closeMenu()">🌙 梦境</a></li>
             <li><a href="#hobby" class="nav-hobby" onclick="closeMenu()">💝 爱好</a></li>
             <li><a href="#period" class="nav-period" onclick="closeMenu()">🌸 周期</a></li>
-            <li><a href="#guestbook" class="nav-guest" onclick="closeMenu()">✉️ 留言</a></li>
+            <li><a href="#guestbook" class="nav-guestbook" onclick="closeMenu()">✉️ 留言</a></li>
             <li><a href="#bindaccount" class="nav-hobby" onclick="closeMenu()">🔗 绑定</a></li>
             <li><a href="#" class="nav-logout" onclick="doLogout();closeMenu()">🚪 退出</a></li>
         </ul>
@@ -531,36 +940,81 @@ footer .footer-warning { margin-top: 12px; font-size: 0.9rem; color: #ccc; }
     </div>
 
     <!-- ========== 1. 首页/仪表盘 ========== -->
-    <section class="hero" id="dashboard">
-        <div class="hero-decoration">💕</div>
-        <div class="subtitle-top">Since the day we met</div>
-        <h1>我们的故事</h1>
-        <div class="couple-names">我 & 你</div>
-        <div class="date-line" id="heroDateLine">2024.02.14 — 至今</div>
-        <div class="scroll-hint" onclick="document.getElementById('dash-cards').scrollIntoView({behavior:'smooth'})">↓</div>
+    <section class="hero-section" id="dashboard">
+        <!-- 浮动爱心 -->
+        <div class="hero-floating">
+            <span>💕</span><span>💗</span><span>💖</span><span>💕</span><span>💗</span>
+            <span>💖</span><span>💕</span><span>💗</span><span>💖</span><span>💕</span>
+        </div>
+        <div class="hero-content">
+            <div class="hero-subtitle">Since the day we met</div>
+            <h1 class="hero-title">我们的故事</h1>
+            <div class="hero-couple">
+                <span class="name">我</span>
+                <span class="heart-icon">❤️</span>
+                <span class="name">你</span>
+            </div>
+            <!-- 时间轴日期 -->
+            <div class="hero-timeline">
+                <span class="tl-dot start"></span>
+                <span class="tl-line"></span>
+                <span class="tl-date" id="heroDateLine">2024.12.06 — 至今</span>
+                <span class="tl-line"></span>
+                <span class="tl-dot end"></span>
+            </div>
+            <!-- 在一起计时 -->
+            <div class="hero-timer-wrap">
+                <div class="hero-date-setting">
+                    <span class="hds-label">从</span>
+                    <input type="date" id="heroStartDate" class="hds-input" onchange="saveHeroStartDate()">
+                    <span class="hds-label">开始</span>
+                </div>
+                <div class="hero-timer-label">✨ 我们已经在一起 ✨</div>
+                <div id="togetherTimer">0天 0小时 0分 0秒</div>
+            </div>
+        </div>
+        <div class="scroll-hint" onclick="document.getElementById('dash-cards').scrollIntoView({behavior:'smooth'})">⌄</div>
     </section>
 
-    <section class="section" id="dash-cards" style="padding-top:40px;">
-        <div class="dashboard-grid">
-            <div class="card dash-date-card">
-                <div class="today-date" id="todayDate"></div>
-                <div class="today-weekday" id="todayWeekday"></div>
+    <!-- Dashboard 卡片 -->
+    <section class="section" id="dash-cards" style="padding-top:20px;">
+        <div class="dash-grid">
+            <!-- 今日日期 -->
+            <div class="dash-card dash-date-card">
+                <span class="dash-icon">📅</span>
+                <div class="dash-label">Today</div>
+                <div id="todayDate"></div>
+                <div id="todayWeekday"></div>
             </div>
-            <div class="card">
-                <div class="dash-quote" id="quoteText"></div>
-                <div class="dash-quote-author" id="quoteAuthor"></div>
+            <!-- 纪念日 -->
+            <div class="dash-card dash-anniv">
+                <span class="dash-icon">🎀</span>
+                <div class="dash-label" id="annivLabel">距离下一个纪念日</div>
+                <div id="nextAnnivDays">--</div>
+                <div class="dash-unit">天</div>
+                <div class="anniv-name" id="annivName"></div>
+                <input type="date" id="nextAnnivDate" value="2026-02-14" onchange="saveAnnivDate()" class="dash-date-input">
             </div>
-            <div class="card dash-next-anniv">
-                <div class="anniv-label">💕 距离下一个纪念日</div>
-                <div class="anniv-days" id="nextAnnivDays">--</div>
-                <div class="anniv-unit">天</div>
-                <input type="date" id="nextAnnivDate" value="2026-02-14" onchange="saveAnnivDate()">
+            <!-- 在一起天数 -->
+            <div class="dash-card dash-countdown">
+                <span class="dash-icon">💕</span>
+                <div class="dash-label">相爱的日子</div>
+                <div class="dash-number" id="togetherDays">0</div>
+                <div class="dash-unit">天</div>
             </div>
-            <div class="card quick-note-area">
-                <div style="font-weight:700;margin-bottom:8px;">📝 快速记录今天的心情</div>
-                <textarea id="quickNoteText" placeholder="今天想说点什么呢..."></textarea>
-                <button onclick="saveQuickNote()">💕 记录</button>
-                <div id="quickNotesList" style="margin-top:14px;"></div>
+            <!-- 每日一句 -->
+            <div class="dash-card dash-quote-card">
+                <span class="dash-icon">💌</span>
+                <div class="quote-text" id="quoteText">遇见你，是我这辈子最幸运的事。</div>
+                <div class="quote-author" id="quoteAuthor"></div>
+            </div>
+            <!-- 快速笔记 -->
+            <div class="dash-card dash-note">
+                <span class="dash-icon">📝</span>
+                <div class="dash-label">今日心情</div>
+                <textarea id="quickNoteText" placeholder="今天想说点什么呢..." class="dash-textarea"></textarea>
+                <button onclick="saveQuickNote()" class="dash-btn">💕 记录</button>
+                <div id="quickNotesList" class="dash-notes-list"></div>
             </div>
         </div>
     </section>
@@ -613,25 +1067,6 @@ footer .footer-warning { margin-top: 12px; font-size: 0.9rem; color: #ccc; }
             <div class="polaroid"><img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=400&h=300&fit=crop" alt="" onclick="openLightbox(3)" style="cursor:pointer"><div class="polaroid-caption">Love in the air</div><span class="polaroid-upload-btn" onclick="event.stopPropagation();triggerUpload(3)">📷 上传</span></div>
             <div class="polaroid"><img src="https://images.unsplash.com/photo-1518199266791-5375a83190b8?w=400&h=300&fit=crop" alt="" onclick="openLightbox(4)" style="cursor:pointer"><div class="polaroid-caption">My favorite person</div><span class="polaroid-upload-btn" onclick="event.stopPropagation();triggerUpload(4)">📷 上传</span></div>
             <div class="polaroid"><img src="https://images.unsplash.com/photo-1544078751-58fee2d8a03b?w=400&h=300&fit=crop" alt="" onclick="openLightbox(5)" style="cursor:pointer"><div class="polaroid-caption">Happiness is you</div><span class="polaroid-upload-btn" onclick="event.stopPropagation();triggerUpload(5)">📷 上传</span></div>
-        </div>
-    </section>
-
-    <!-- ========== 4. 在一起计时 ========== -->
-    <section class="section" id="countdown">
-        <div class="countdown-section">
-            <div class="countdown-label">We've been together for...</div>
-            <div class="countdown-target">💕 我们已经在一起 💕</div>
-            <div class="date-edit-row">
-                <label for="startDate">在一起的日期：</label>
-                <input type="date" id="startDate" value="2024-02-14" onchange="saveAndRecalc()">
-            </div>
-            <div class="countdown-boxes">
-                <div class="countdown-box"><div class="countdown-number" id="cd-days">000</div><div class="countdown-unit">天</div></div>
-                <div class="countdown-box"><div class="countdown-number" id="cd-hours">00</div><div class="countdown-unit">时</div></div>
-                <div class="countdown-box"><div class="countdown-number" id="cd-minutes">00</div><div class="countdown-unit">分</div></div>
-                <div class="countdown-box"><div class="countdown-number" id="cd-seconds">00</div><div class="countdown-unit">秒</div></div>
-            </div>
-            <div class="together-quote">每一秒都值得珍惜 ✨</div>
         </div>
     </section>
 
@@ -759,38 +1194,56 @@ footer .footer-warning { margin-top: 12px; font-size: 0.9rem; color: #ccc; }
 
     <!-- ========== 8. 姨妈周期记录 ========== -->
     <section class="section" id="period">
-        <div class="section-title">姨妈周期记录</div>
+        <div class="section-title">🌸 姨妈周期记录</div>
         <div class="section-subtitle">Take care of her</div>
-        <div class="period-info">
-            <div class="card period-card">
-                <div class="p-label">上次开始日期</div>
-                <div class="p-value" id="periodLastDate">未记录</div>
-                <input type="date" id="periodStartInput" style="margin-top:8px;padding:6px 10px;border:2px solid var(--pink-mid);border-radius:10px;font-size:0.85rem;color:var(--pink-deep);background:var(--white);outline:none;" onchange="savePeriodStart()">
+
+        <div class="period-section">
+            <!-- 设置卡片：日期 + 周期天数 -->
+            <div class="period-settings">
+                <div class="ps-row">
+                    <div class="ps-item">
+                        <div class="ps-label">📅 上次开始日期</div>
+                        <div class="ps-value" id="periodLastDate">未记录</div>
+                        <input type="date" id="periodStartInput" class="ps-input" onchange="savePeriodStart()">
+                    </div>
+                    <div class="ps-item">
+                        <div class="ps-label">🔄 周期天数</div>
+                        <div class="ps-value" id="periodCycleDays">28</div>
+                        <input type="number" id="periodCycleInput" class="ps-input ps-input-num" value="28" min="20" max="45" onchange="savePeriodCycle()">
+                    </div>
+                    <div class="ps-item">
+                        <div class="ps-label">&nbsp;</div>
+                        <button class="ps-btn" onclick="markTodayPeriod()">🌸 今天开始</button>
+                    </div>
+                </div>
             </div>
-            <div class="card period-card">
-                <div class="p-label">周期天数</div>
-                <div class="p-value" id="periodCycleDays">28</div>
-                <input type="number" id="periodCycleInput" value="28" min="20" max="45" style="margin-top:8px;width:80px;padding:6px 10px;border:2px solid var(--pink-mid);border-radius:10px;font-size:0.85rem;color:var(--pink-deep);background:var(--white);outline:none;text-align:center;" onchange="savePeriodCycle()">
+
+            <!-- 当前阶段状态 -->
+            <div id="periodStage" class="period-status"></div>
+
+            <!-- 四期图例 -->
+            <div class="period-legend">
+                <div class="pl-item pl-menstrual"><span class="pl-dot"></span>月经期（第1-5天）</div>
+                <div class="pl-item pl-follicular"><span class="pl-dot"></span>卵泡期（第6-13天）</div>
+                <div class="pl-item pl-ovulation"><span class="pl-dot"></span>排卵期（第14-16天）</div>
+                <div class="pl-item pl-luteal"><span class="pl-dot"></span>黄体期（第17-28天）</div>
             </div>
-        </div>
 
-        <!-- 四期图例 -->
-        <div class="phase-legend">
-            <div class="phase-item phase-menstrual"><div class="phase-dot"></div><span>月经期（约1-5天）</span></div>
-            <div class="phase-item phase-follicular"><div class="phase-dot"></div><span>卵泡期（约6-13天）</span></div>
-            <div class="phase-item phase-ovulation"><div class="phase-dot"></div><span>排卵期（约14-16天）</span></div>
-            <div class="phase-item phase-luteal"><div class="phase-dot"></div><span>黄体期（约17-28天）</span></div>
-        </div>
+            <!-- 月份导航 -->
+            <div class="period-month-nav">
+                <button class="pm-btn" onclick="periodPrevMonth()">‹</button>
+                <div class="pm-title" id="periodMonthTitle">2026年5月</div>
+                <button class="pm-btn" onclick="periodNextMonth()">›</button>
+            </div>
 
-        <!-- 当前阶段指示卡片 -->
-        <div class="current-phase-cards" id="phaseCards"></div>
-
-        <div id="periodStage" class="period-stage"></div>
-        <div class="card" style="padding:20px;overflow-x:auto;">
-            <div id="periodCalendar"></div>
-        </div>
-        <div class="period-quick">
-            <button class="btn-primary" onclick="markTodayPeriod()">🌸 今天开始</button>
+            <!-- 日历 -->
+            <div class="period-calendar" id="periodCalendar">
+                <div class="pc-weekdays">
+                    <span>日</span><span>一</span><span>二</span><span>三</span>
+                    <span>四</span><span>五</span><span>六</span>
+                </div>
+                <div class="pc-grid" id="periodCalGrid"></div>
+            </div>
         </div>
     </section>
 
@@ -892,6 +1345,7 @@ function closeRecover(){document.getElementById('recoverModal').classList.remove
 
 // ============ 导航 ============
 function toggleMenu(){document.getElementById('navLinks').classList.toggle('open');}
+function closeMenu(){document.getElementById('navLinks').classList.remove('open');}
 function scrollToSection(id){
     document.getElementById('navLinks').classList.remove('open');
     var el=document.getElementById(id);
@@ -901,9 +1355,29 @@ function scrollToSection(id){
 // ============ 仪表盘 ============
 function getTodayStr(){return new Date().toISOString().slice(0,10);}
 function initDashboard(){
-    document.getElementById('todayDate').textContent=getTodayStr();
     var d=new Date();var days=['日','一','二','三','四','五','六'];
-    document.getElementById('todaySolar').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+days[d.getDay()];
+    var el=document.getElementById('todayDate');if(el)el.textContent=d.getFullYear()+'.'+(String(d.getMonth()+1).padStart(2,'0'))+'.'+String(d.getDate()).padStart(2,'0');
+    var el2=document.getElementById('todayWeekday');if(el2)el2.textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+days[d.getDay()];
+
+    // 计算在一起天数
+    var start=parseLocalDate(getStartDate());
+    var now=new Date();now.setHours(0,0,0,0);
+    var diff=Math.floor((now-start)/(1000*60*60*24));
+    var tdEl=document.getElementById('togetherDays');
+    if(tdEl)tdEl.textContent=diff>0?diff:0;
+
+    // 每日一句
+    var quotes=[
+        {text:'愿每一天的太阳都为你升起，愿你每一天都如花般绽放。',author:'— 致最爱的你'},
+        {text:'遇见你，是我这辈子最幸运的事。',author:'— 爱你的人'},
+        {text:'无论晴天雨天，有你便是好天气。',author:'— 致我的全世界'},
+        {text:'世界那么大，我只想和你在一起。',author:'— 永远爱你的我'},
+        {text:'你是我写过最美的情书。',author:'— 关于你的一切'}
+    ];
+    var q=quotes[Math.floor(Math.random()*quotes.length)];
+    var qEl=document.getElementById('quoteText');if(qEl)qEl.textContent=q.text;
+    var aEl=document.getElementById('quoteAuthor');if(aEl)aEl.textContent=q.author;
+
     updateNextAnniv();
 }
 function getNextAnniversary(){
@@ -922,14 +1396,39 @@ function getNextAnniversary(){
     return best;
 }
 function updateNextAnniv(){
-    var el=document.getElementById('nextAnniv');var an=getNextAnniversary();
-    if(an){el.querySelector('.anniv-name').textContent='💕 '+an.name;el.querySelector('.anniv-days').textContent=an.days;el.querySelector('.anniv-unit').textContent='天后';}
-    else{el.querySelector('.anniv-name').textContent='💕 下一个纪念日';el.querySelector('.anniv-days').textContent='--';el.querySelector('.anniv-unit').textContent='设置纪念日开始';}
+    var an=getNextAnniversary();
+    var daysEl=document.getElementById('nextAnnivDays');
+    var labelEl=document.getElementById('annivLabel');
+    var nameEl=document.getElementById('annivName');
+    if(!daysEl)return;
+    if(an&&an.days&&an.days>0){
+        daysEl.textContent=an.days;
+        if(labelEl)labelEl.textContent='🎀 距离 '+an.name;
+        if(nameEl)nameEl.textContent='倒计时 '+an.days+' 天';
+    }else{
+        // 没有纪念日，用日期输入框的值计算
+        var dateInput=document.getElementById('nextAnnivDate');
+        if(dateInput&&dateInput.value){
+            var parts=dateInput.value.split('-');
+            var target=new Date(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
+            var now=new Date();now.setHours(0,0,0,0);
+            if(target<now)target=new Date(now.getFullYear()+1,parseInt(parts[1])-1,parseInt(parts[2]));
+            var diff=Math.ceil((target-now)/(1000*60*60*24));
+            daysEl.textContent=diff>0?diff:0;
+            if(labelEl)labelEl.textContent='🎀 距离纪念日';
+            if(nameEl)nameEl.textContent='';
+        }else{
+            daysEl.textContent='--';
+            if(labelEl)labelEl.textContent='🎀 距离下一个纪念日';
+            if(nameEl)nameEl.textContent='';
+        }
+    }
 }
 
 // ============ 便签 ============
 function renderQuickNotes(){
-    var el=document.getElementById('quickNotes');var saved=lsGet('quickNotes');var notes=saved?JSON.parse(saved):[];
+    var el=document.getElementById('quickNotesList');if(!el)return;
+    var saved=lsGet('quickNotes');var notes=saved?JSON.parse(saved):[];
     var html=notes.map(function(n,i){return '<div class="qn-card"><div class="qn-date">'+n.date+'</div><div class="qn-text" contenteditable="true" data-i="'+i+'">'+n.text+'</div><div class="qn-actions"><button onclick="deleteNote('+i+')">删除</button></div></div>';}).join('');
     html+='<div class="qn-add" onclick="addNote()">+</div>';
     el.innerHTML=html;
@@ -943,6 +1442,13 @@ function addNote(){
 function deleteNote(i){
     var saved=lsGet('quickNotes');var notes=saved?JSON.parse(saved):[];
     notes.splice(i,1);lsSet('quickNotes',JSON.stringify(notes));renderQuickNotes();
+}
+function saveQuickNote(){
+    var el=document.getElementById('quickNoteText');if(!el)return;
+    var text=el.value.trim();if(!text)return;
+    var saved=lsGet('quickNotes');var notes=saved?JSON.parse(saved):[];
+    notes.unshift({text:text,date:new Date().toLocaleDateString('zh-CN')});
+    lsSet('quickNotes',JSON.stringify(notes));el.value='';renderQuickNotes();
 }
 
 // ============ 恋爱小贴士 ============
@@ -971,14 +1477,54 @@ function triggerUpload(idx){
         var file=e.target.files[0];if(!file)return;
         var reader=new FileReader();
         reader.onload=function(ev){
-            var img=document.getElementById('galleryImg'+idx);
-            img.src=ev.target.result;
-            lsSet('uploadedPhoto_'+idx,ev.target.result);
+            var imgs=document.querySelectorAll('.gallery-grid .polaroid img');
+            if(imgs[idx]){imgs[idx].src=ev.target.result;lsSet('uploadedPhoto_'+idx,ev.target.result);}
         };
         reader.readAsDataURL(file);
     };
     f.click();
 }
+function handlePhotoUpload(e){
+    var file=e.target.files[0];if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+        var imgs=document.querySelectorAll('.gallery-grid .polaroid img');
+        var idx=-1;for(var i=0;i<imgs.length;i++){if(!lsGet('uploadedPhoto_'+i)){idx=i;break;}}
+        if(idx>=0){imgs[idx].src=ev.target.result;lsSet('uploadedPhoto_'+idx,ev.target.result);}
+    };
+    reader.readAsDataURL(file);
+}
+function triggerTimelineUpload(idx){
+    var inp=document.getElementById('timelinePhotoInput');if(!inp)return;
+    inp.dataset.tlIndex=idx;inp.click();
+}
+function handleTimelinePhotoUpload(e){
+    var file=e.target.files[0];if(!file)return;
+    var idx=parseInt(e.target.dataset.tlIndex)||0;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+        var items=document.querySelectorAll('.timeline-item');
+        if(items[idx]){var img=items[idx].querySelector('.timeline-photo');if(img){img.src=ev.target.result;lsSet('tl_photo_'+idx,ev.target.result);}}
+    };
+    reader.readAsDataURL(file);
+}
+
+// ============ 灯箱 ============
+var _lbIdx=0,_lbAuto=false,_lbTimer=null;
+function openLightbox(idx){
+    _lbIdx=idx;var imgs=document.querySelectorAll('.gallery-grid .polaroid img');
+    var el=document.getElementById('lightbox');if(!el)return;
+    document.getElementById('lightboxImg').src=imgs[idx].src;
+    var captions=document.querySelectorAll('.gallery-grid .polaroid .polaroid-caption');
+    document.getElementById('lightboxCaption').textContent=captions[idx]?captions[idx].textContent:'';
+    document.getElementById('lightboxCounter').textContent=(idx+1)+'/'+imgs.length;
+    el.classList.add('show');
+}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('show');stopAutoplay();}
+function prevPhoto(){var imgs=document.querySelectorAll('.gallery-grid .polaroid img');_lbIdx=(_lbIdx-1+imgs.length)%imgs.length;openLightbox(_lbIdx);}
+function nextPhoto(){var imgs=document.querySelectorAll('.gallery-grid .polaroid img');_lbIdx=(_lbIdx+1)%imgs.length;openLightbox(_lbIdx);}
+function toggleAutoplay(){_lbAuto=!_lbAuto;if(_lbAuto){document.getElementById('lightboxAutoplay').textContent='⏸ 暂停';_lbTimer=setInterval(nextPhoto,3000);}else{stopAutoplay();}}
+function stopAutoplay(){_lbAuto=false;clearInterval(_lbTimer);var el=document.getElementById('lightboxAutoplay');if(el)el.textContent='▶ 自动播放';}
 
 // ============ 倒计时 ============
 function parseLocalDate(str){
@@ -1010,9 +1556,20 @@ function saveStartDate(){
     var v=document.getElementById('startDate').value;
     lsSet('startDate',v);updateHeroDate();updateTogetherTimer();
 }
+function saveHeroStartDate(){
+    var v=document.getElementById('heroStartDate').value;
+    lsSet('startDate',v);updateHeroDate();updateTogetherTimer();
+    var start=parseLocalDate(v);
+    var now=new Date();now.setHours(0,0,0,0);
+    var diff=Math.floor((now-start)/(1000*60*60*24));
+    var tdEl=document.getElementById('togetherDays');
+    if(tdEl)tdEl.textContent=diff>0?diff:0;
+}
 function updateHeroDate(){
     var saved=lsGet('startDate');var display=saved||'2024-12-25';
-    var el=document.getElementById('heroDate');if(el)el.textContent=display;
+    var el=document.getElementById('heroDateLine');if(el)el.textContent=display+' — 至今';
+    var hsd=document.getElementById('heroStartDate');
+    if(hsd&&hsd.value!==saved)hsd.value=saved;
 }
 function updateTogetherTimer(){
     var saved=lsGet('startDate')||'2024-12-25';
@@ -1041,6 +1598,11 @@ function saveDiary(){
     lsSet('diaries',JSON.stringify(diaries));
     document.getElementById('diaryContent').value='';renderDiaries();
 }
+function clearDiaryForm(){
+    document.getElementById('diaryContent').value='';
+    document.querySelectorAll('#diaryForm .mood-btn').forEach(function(b){b.classList.remove('selected');});
+    diaryMood='';
+}
 function renderDiaries(){
     var el=document.getElementById('diaryList');var saved=lsGet('diaries');var diaries=saved?JSON.parse(saved):[];
     if(!diaries.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:30px;">还没有日记，写下第一篇吧 📝</div>';return;}
@@ -1055,6 +1617,24 @@ function deleteDiary(i){
 }
 
 // ============ 梦想 ============
+function saveDream(who){
+    var dateInput=document.getElementById('dreamDate'+(who==='his'?'His':'Hers'));
+    var titleInput=document.getElementById('dreamTitle'+(who==='his'?'His':'Hers'));
+    var contentInput=document.getElementById('dreamContent'+(who==='his'?'His':'Hers'));
+    var title=titleInput?titleInput.value.trim():'';
+    var content=contentInput?contentInput.value.trim():'';
+    if(!content){alert('请输入梦境内容');return;}
+    var key='dreams_'+who;var saved=lsGet(key);var dreams=saved?JSON.parse(saved):[];
+    dreams.unshift({date:dateInput?dateInput.value:'',title:title,content:content,time:new Date().toLocaleString('zh-CN')});
+    lsSet(key,JSON.stringify(dreams));
+    if(titleInput)titleInput.value='';if(contentInput)contentInput.value='';
+    renderDreams(who);
+}
+function clearDreamForm(who){
+    var titleInput=document.getElementById('dreamTitle'+(who==='his'?'His':'Hers'));
+    var contentInput=document.getElementById('dreamContent'+(who==='his'?'His':'Hers'));
+    if(titleInput)titleInput.value='';if(contentInput)contentInput.value='';
+}
 function addDream(who){
     var input=document.getElementById('dreamInput'+(who==='his'?'His':'Hers'));
     var text=input.value.trim();if(!text)return;
@@ -1064,24 +1644,48 @@ function addDream(who){
 }
 function toggleDream(who,i){
     var key='dreams_'+who;var saved=lsGet(key);var dreams=saved?JSON.parse(saved):[];
-    dreams[i].done=!dreams[i].done;lsSet(key,JSON.stringify(dreams));renderDreams(who);
+    if(dreams[i]&&typeof dreams[i].done!=='undefined'){dreams[i].done=!dreams[i].done;lsSet(key,JSON.stringify(dreams));renderDreams(who);}
 }
 function deleteDream(who,i){
     var key='dreams_'+who;var saved=lsGet(key);var dreams=saved?JSON.parse(saved):[];
+    if(!dreams[i])return;
+    if(!confirm('确定删除这条梦境？'))return;
     dreams.splice(i,1);lsSet(key,JSON.stringify(dreams));renderDreams(who);
 }
 function renderDreams(who){
     var key='dreams_'+who;var saved=lsGet(key);var dreams=saved?JSON.parse(saved):[];
-    var el=document.getElementById('dreamList'+(who==='his'?'His':'Hers'));
-    if(!dreams.length){el.innerHTML='<li style="text-align:center;color:#aaa;padding:20px;">还没有梦想</li>';return;}
-    var done=dreams.filter(function(d){return d.done;}).length;
+    var el=document.getElementById('dreamList'+(who==='his'?'His':'Hers'));if(!el)return;
+    if(!dreams.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:30px;">还没有梦境记录 🌙</div>';return;}
     el.innerHTML=dreams.map(function(d,i){
-        return '<li class="dream-item"><input type="checkbox" '+(d.done?'checked':'')+' onchange="toggleDream(\''+who+'\','+i+')"><span class="'+(d.done?'done':'')+'">'+d.text+'</span><button class="dream-del" onclick="deleteDream(\''+who+'\','+i+')">✕</button></li>';
+        var html='<div class="dream-card" style="background:rgba(255,255,255,0.85);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);position:relative;margin-bottom:12px;">';
+        if(d.date)html+='<div style="font-size:0.85rem;color:var(--text-light);margin-bottom:4px;">📅 '+d.date+'</div>';
+        if(d.title)html+='<div style="font-size:1rem;font-weight:700;color:var(--text-dark);margin-bottom:4px;">'+d.title+'</div>';
+        if(d.content)html+='<div style="font-size:0.95rem;color:var(--text-dark);line-height:1.6;">'+d.content.replace(/\n/g,'<br>')+'</div>';
+        html+='<button onclick="deleteDream(\''+who+'\','+i+')" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1rem;color:#ccc;cursor:pointer;">✕</button>';
+        html+='</div>';
+        return html;
     }).join('');
-    el.parentElement.querySelector('.dream-progress').textContent='完成进度：'+done+'/'+dreams.length;
 }
 
 // ============ 爱好 ============
+function saveHobby(who){
+    var nameInput=document.getElementById('hobbyName'+(who==='his'?'His':'Hers'));
+    var starsSelect=document.getElementById('hobbyStars'+(who==='his'?'His':'Hers'));
+    var noteInput=document.getElementById('hobbyNote'+(who==='his'?'His':'Hers'));
+    var name=nameInput?nameInput.value.trim():'';if(!name)return;
+    var stars=starsSelect?starsSelect.value:'3';
+    var note=noteInput?noteInput.value.trim():'';
+    var key='hobbies_'+who;var saved=lsGet(key);var hobbies=saved?JSON.parse(saved):[];
+    hobbies.push({name:name,stars:stars,note:note});
+    lsSet(key,JSON.stringify(hobbies));
+    if(nameInput)nameInput.value='';if(noteInput)noteInput.value='';
+    renderHobbies(who);
+}
+function clearHobbyForm(who){
+    var nameInput=document.getElementById('hobbyName'+(who==='his'?'His':'Hers'));
+    var noteInput=document.getElementById('hobbyNote'+(who==='his'?'His':'Hers'));
+    if(nameInput)nameInput.value='';if(noteInput)noteInput.value='';
+}
 function addHobby(who){
     var formId=who==='his'?'hobbyFormHis':'hobbyFormHers';
     var nameInput=document.querySelector('#'+formId+' input');
@@ -1096,91 +1700,172 @@ function deleteHobby(who,i){
 }
 function renderHobbies(who){
     var key='hobbies_'+who;var saved=lsGet(key);var hobbies=saved?JSON.parse(saved):[];
-    var el=document.getElementById('hobbyGrid'+(who==='his'?'His':'Hers'));
+    var el=document.getElementById('hobbyGrid'+(who==='his'?'His':'Hers'));if(!el)return;
     var icons=['🎮','⚽','🎵','📚','🎨','🎬','✈️','🍜','📷','💻','🎸','🏋️'];
     el.innerHTML=hobbies.map(function(h,i){
-        return '<div class="hobby-item"><div class="hobby-icon">'+(icons[i%icons.length])+'</div><div class="hobby-name">'+h.name+'</div><button class="hobby-del" onclick="deleteHobby(\''+who+'\','+i+')">✕</button></div>';
+        var stars=h.stars?parseInt(h.stars):0;
+        var starStr='⭐'.repeat(stars);
+        var html='<div class="hobby-item"><div class="hobby-icon">'+(icons[i%icons.length])+'</div><div class="hobby-name">'+h.name+'</div>';
+        if(starStr)html+='<div style="font-size:0.75rem;color:#ffb300;">'+starStr+'</div>';
+        if(h.note)html+='<div style="font-size:0.75rem;color:var(--text-light);margin-top:2px;">'+h.note+'</div>';
+        html+='<button class="hobby-del" onclick="deleteHobby(\''+who+'\','+i+')">✕</button></div>';
+        return html;
     }).join('');
 }
 
 // ============ 经期记录 ============
-var periodStartDate='',periodCycle=28;
+var periodStartDate='',periodCycle=28,periodViewMonth=null;
+
+function getPeriodPhase(cycleDay){
+    if(!cycleDay||cycleDay<1)return {name:'',color:'',icon:'',cls:''};
+    if(cycleDay<=5) return {name:'月经期',color:'#c62828',icon:'🩸',cls:'menstrual'};
+    if(cycleDay<=13) return {name:'卵泡期',color:'#6a1b9a',icon:'🌱',cls:'follicular'};
+    if(cycleDay<=16) return {name:'排卵期',color:'#e65100',icon:'🌸',cls:'ovulation'};
+    return {name:'黄体期',color:'#00695c',icon:'🍂',cls:'luteal'};
+}
+
 function loadPeriod(){
     periodStartDate=lsGet('periodStartDate')||'';
     periodCycle=parseInt(lsGet('periodCycle'))||28;
     document.getElementById('periodStartInput').value=periodStartDate;
     document.getElementById('periodCycleInput').value=periodCycle;
-    updatePeriodDisplay();renderPeriodCal();
+    periodViewMonth=null;
+    updatePeriodDisplay();renderPeriodCalendar();
 }
 function savePeriodStart(){
     periodStartDate=document.getElementById('periodStartInput').value;
-    lsSet('periodStartDate',periodStartDate);updatePeriodDisplay();renderPeriodCal();
+    lsSet('periodStartDate',periodStartDate);updatePeriodDisplay();renderPeriodCalendar();
 }
 function savePeriodCycle(){
     periodCycle=parseInt(document.getElementById('periodCycleInput').value)||28;
-    lsSet('periodCycle',periodCycle);updatePeriodDisplay();renderPeriodCal();
+    lsSet('periodCycle',periodCycle);updatePeriodDisplay();renderPeriodCalendar();
 }
+function markTodayPeriod(){
+    var today=new Date().toISOString().slice(0,10);
+    document.getElementById('periodStartInput').value=today;
+    periodStartDate=today;lsSet('periodStartDate',today);
+    updatePeriodDisplay();renderPeriodCalendar();
+}
+
 function updatePeriodDisplay(){
-    var el=document.getElementById('periodInfo');
-    if(!periodStartDate){el.innerHTML='<div class="period-card"><div class="p-label">请设置经期开始日期</div></div>';return;}
-    var start=parseLocalDate(periodStartDate);var now=new Date();now.setHours(0,0,0,0);
-    var diff=Math.floor((now-start)/(1000*60*60*24));
-    var dayInCycle=(diff%periodCycle)+1;
-    var phase='',phaseIcon='',phaseColor='';
-    if(dayInCycle<=7){phase='月经期';phaseIcon='🩸';phaseColor='#e53935';}
-    else if(dayInCycle<=14){phase='卵泡期';phaseIcon='🌱';phaseColor='#4caf50';}
-    else if(dayInCycle<=16){phase='排卵期';phaseIcon='🌸';phaseColor='#ff9800';}
-    else{phase='黄体期';phaseIcon='🍂';phaseColor='#9c27b0';}
-    var daysUntil=periodCycle-dayInCycle+1;
-    el.innerHTML='<div class="period-card"><div class="p-label">'+phaseIcon+' 当前阶段</div><div class="p-value" style="color:'+phaseColor+'">'+phase+'</div><div class="p-sub">周期第 '+dayInCycle+' 天</div></div><div class="period-card"><div class="p-label">📅 预计下次</div><div class="p-value">'+daysUntil+'</div><div class="p-sub">天后</div></div>';
-}
-function renderPeriodCal(){
-    var cal=document.getElementById('periodCalBody');
-    if(!periodStartDate){cal.innerHTML='<tr><td colspan="7" style="text-align:center;color:#aaa;padding:20px;">请先设置经期开始日期</td></tr>';return;}
-    var now=new Date();var year=now.getFullYear(),month=now.getMonth();
-    var firstDay=new Date(year,month,1).getDay();var daysInMonth=new Date(year,month+1,0).getDate();
-    var start=parseLocalDate(periodStartDate);var html='';var day=1;
-    for(var w=0;w<6;w++){
-        html+='<tr>';
-        for(var d=0;d<7;d++){
-            if(w===0&&d<firstDay){html+='<td class="empty"></td>';continue;}
-            if(day>daysInMonth){html+='<td class="empty"></td>';continue;}
-            var date=new Date(year,month,day);
-            var diff=Math.floor((date-start)/(1000*60*60*24));
-            var cycleDay=(diff%periodCycle)+1;var cls='';
-            if(diff>=0){if(cycleDay<=7)cls='period-day';else if(cycleDay>=periodCycle-2)cls='predict';}
-            if(day===now.getDate()&&month===now.getMonth())cls='today';
-            html+='<td class="'+cls+'">'+day+'</td>';day++;
-        }
-        html+='</tr>';if(day>daysInMonth)break;
+    var el=document.getElementById('periodStage');if(!el)return;
+    if(!periodStartDate){
+        el.innerHTML='<div class="ps-card"><div class="psc-icon">📋</div><div class="psc-label">请设置经期开始日期</div><div class="psc-sub" style="color:var(--text-light);font-size:0.9rem;margin-top:6px;">点击上方日期选择器设置</div></div>';
+        return;
     }
-    cal.innerHTML=html;
+    var start=parseLocalDate(periodStartDate);if(!start)return;
+    var now=new Date();now.setHours(0,0,0,0);
+    var diff=Math.floor((now-start)/(1000*60*60*24));
+    if(diff<0)diff=0;
+    var dayInCycle=(diff%periodCycle)+1;
+    var phase=getPeriodPhase(dayInCycle);
+    var daysUntil=periodCycle-dayInCycle;
+
+    // 计算总统计次数
+    var totalCycles=Math.floor(diff/periodCycle)+1;
+
+    el.innerHTML=
+        '<div class="ps-card"><div class="psc-icon">'+phase.icon+'</div><div class="psc-label">当前阶段</div><div class="psc-value" style="color:'+phase.color+'">'+phase.name+'</div><div class="psc-sub">周期第 '+dayInCycle+' 天</div></div>'+
+        '<div class="ps-card"><div class="psc-icon">📅</div><div class="psc-label">预计下次</div><div class="psc-value" style="color:var(--pink-deep)">'+daysUntil+'</div><div class="psc-sub">天后</div></div>'+
+        '<div class="ps-card"><div class="psc-icon">📊</div><div class="psc-label">已记录</div><div class="psc-value" style="color:#ce93d8">'+totalCycles+'</div><div class="psc-sub">个周期</div></div>';
+}
+
+function renderPeriodCalendar(){
+    var grid=document.getElementById('periodCalGrid');if(!grid)return;
+    var titleEl=document.getElementById('periodMonthTitle');
+    if(!periodStartDate){
+        grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#aaa;padding:30px;">请先设置经期开始日期 📅</div>';
+        if(titleEl)titleEl.textContent='--年--月';
+        return;
+    }
+    var start=parseLocalDate(periodStartDate);if(!start)return;
+    var now=new Date();
+    var year=periodViewMonth?periodViewMonth.getFullYear():now.getFullYear();
+    var month=periodViewMonth?periodViewMonth.getMonth():now.getMonth();
+    periodViewMonth=new Date(year,month,1);
+
+    if(titleEl)titleEl.textContent=year+'年'+(month+1)+'月';
+
+    var daysInMonth=new Date(year,month+1,0).getDate();
+    var firstDay=new Date(year,month,1).getDay(); // 0=Sun
+
+    var html='';
+    // 空白占位
+    for(var i=0;i<firstDay;i++){
+        html+='<div class="pc-day empty"></div>';
+    }
+    // 日期格子
+    for(var d=1;d<=daysInMonth;d++){
+        var date=new Date(year,month,d);
+        date.setHours(0,0,0,0);
+        var diff=Math.floor((date-start)/(1000*60*60*24));
+        var cycleDay=(diff%periodCycle)+1;
+        var phase=diff>=0?getPeriodPhase(cycleDay):null;
+        var isToday=(d===now.getDate()&&month===now.getMonth()&&year===now.getFullYear());
+
+        var cls='pc-day';
+        if(diff<0) cls+=' pc-future';
+        else if(phase) cls+=' pc-'+phase.cls;
+        if(isToday) cls+=' today-mark';
+
+        var num=d;
+        var tag=phase?phase.icon:'';
+
+        html+='<div class="'+cls+'"><span class="pc-num">'+num+'</span>'+'<span class="pc-tag">'+tag+'</span></div>';
+    }
+    grid.innerHTML=html;
+}
+
+function periodPrevMonth(){
+    if(!periodViewMonth){
+        var now=new Date();
+        periodViewMonth=new Date(now.getFullYear(),now.getMonth()-1,1);
+    }else{
+        periodViewMonth=new Date(periodViewMonth.getFullYear(),periodViewMonth.getMonth()-1,1);
+    }
+    renderPeriodCalendar();
+}
+function periodNextMonth(){
+    if(!periodViewMonth){
+        var now=new Date();
+        periodViewMonth=new Date(now.getFullYear(),now.getMonth()+1,1);
+    }else{
+        periodViewMonth=new Date(periodViewMonth.getFullYear(),periodViewMonth.getMonth()+1,1);
+    }
+    renderPeriodCalendar();
 }
 
 // ============ 留言板 ============
-function saveGuestbook(){
-    var name=document.getElementById('gbName').value.trim();
-    var text=document.getElementById('gbText').value.trim();
+function submitMessage(){
+    var name=document.getElementById('msgName').value.trim();
+    var text=document.getElementById('msgContent').value.trim();
     if(!text){alert('请输入留言内容');return;}
     var saved=lsGet('guestbook');var list=saved?JSON.parse(saved):[];
     list.unshift({name:name||'匿名',text:text,time:new Date().toLocaleString('zh-CN')});
     lsSet('guestbook',JSON.stringify(list));
-    document.getElementById('gbText').value='';renderGuestbook();
+    document.getElementById('msgContent').value='';renderGuestbook();
 }
-function renderGuestbook(){
-    var el=document.getElementById('gbList');var saved=lsGet('guestbook');var list=saved?JSON.parse(saved):[];
-    if(!list.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:30px;">还没有留言 💬</div>';return;}
-    el.innerHTML=list.map(function(m,i){
-        return '<div class="gb-card"><div class="gb-name">💌 '+m.name+'</div><div class="gb-text">'+m.text.replace(/\n/g,'<br>')+'</div><div class="card-date">'+m.time+'</div><button class="gb-del" onclick="deleteGuestbook('+i+')">✕</button></div>';
-    }).join('');
-}
-function deleteGuestbook(i){
+function deleteMessage(btn){
+    var card=btn.closest('.message-card');if(!card)return;
+    var idx=Array.from(card.parentElement.children).indexOf(card);
     if(!confirm('确定删除这条留言？'))return;
     var saved=lsGet('guestbook');var list=saved?JSON.parse(saved):[];
-    list.splice(i,1);lsSet('guestbook',JSON.stringify(list));renderGuestbook();
+    list.splice(idx,1);lsSet('guestbook',JSON.stringify(list));renderGuestbook();
+}
+function renderGuestbook(){
+    var el=document.getElementById('messagesList');if(!el)return;
+    var saved=lsGet('guestbook');var list=saved?JSON.parse(saved):[];
+    if(!list.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:30px;">还没有留言 💬</div>';return;}
+    el.innerHTML=list.map(function(m,i){
+        return '<div class="message-card"><button class="msg-delete" onclick="deleteMessage(this)" title="删除">×</button><div class="msg-header"><span class="msg-name">💌 '+m.name+'</span><span class="msg-time">'+m.time+'</span></div><div class="msg-content">'+m.text.replace(/\n/g,'<br>')+'</div></div>';
+    }).join('');
 }
 
 // ============ 纪念日 ============
+function saveAnnivDate(){
+    var v=document.getElementById('nextAnnivDate').value;if(v)lsSet('nextAnnivDate',v);
+    updateNextAnniv();
+}
 function loadAnniversaries(){
     var saved=lsGet('anniversaries');
     var list=saved?JSON.parse(saved):[{name:'在一起纪念日',date:'2024-12-25'}];
@@ -1211,6 +1896,15 @@ function toggleMusic(){
     if(musicPlaying){bgMusic.pause();document.getElementById('musicBtn').classList.remove('playing');}
     else{bgMusic.play();document.getElementById('musicBtn').classList.add('playing');}
     musicPlaying=!musicPlaying;
+}
+function handleMusicUpload(e){
+    var file=e.target.files[0];if(!file)return;
+    var url=URL.createObjectURL(file);
+    if(bgMusic){bgMusic.pause();bgMusic=null;}
+    bgMusic=new Audio(url);bgMusic.loop=true;
+    bgMusic.play();musicPlaying=true;
+    document.getElementById('musicBtn').classList.add('playing');
+    document.getElementById('musicInfo').textContent='🎵 '+file.name;
 }
 
 // ============ 彩蛋 ============
@@ -1299,7 +1993,8 @@ function initAfterLogin(){
     // 便签
     renderQuickNotes();
     // 在一起计时
-    document.getElementById('startDate').value=getStartDate();updateHeroDate();updateTogetherTimer();setInterval(updateTogetherTimer,1000);
+    var hsd=document.getElementById('heroStartDate');if(hsd)hsd.value=getStartDate();
+    updateHeroDate();updateTogetherTimer();setInterval(updateTogetherTimer,1000);
     // 日记
     document.getElementById('diaryDate').value=new Date().toISOString().slice(0,10);
     document.querySelector('#diaryForm .mood-btn').classList.add('selected');
@@ -1310,6 +2005,10 @@ function initAfterLogin(){
     renderDreams('his');renderDreams('hers');
     // 爱好
     renderHobbies('his');renderHobbies('hers');
+    // 经期
+    loadPeriod();
+    // 留言板
+    renderGuestbook();
     // 绑定
     loadBind();
     // 彩蛋事件
