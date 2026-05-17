@@ -878,6 +878,7 @@ function doLogin(){
     document.getElementById('main-page').style.display='block';
     document.getElementById('loading-screen').classList.remove('hidden');
     setTimeout(function(){document.getElementById('loading-screen').classList.add('hidden');},1800);
+    try{initAfterLogin();}catch(e){console.error('init error:',e);}
 }
 
 function doLogout(){
@@ -888,6 +889,435 @@ function doLogout(){
 
 function openRecover(){document.getElementById('recoverModal').classList.add('show');}
 function closeRecover(){document.getElementById('recoverModal').classList.remove('show');}
+
+// ============ 导航 ============
+function toggleMenu(){document.getElementById('navLinks').classList.toggle('open');}
+function scrollToSection(id){
+    document.getElementById('navLinks').classList.remove('open');
+    var el=document.getElementById(id);
+    if(el)el.scrollIntoView({behavior:'smooth'});
+}
+
+// ============ 仪表盘 ============
+function getTodayStr(){return new Date().toISOString().slice(0,10);}
+function initDashboard(){
+    document.getElementById('todayDate').textContent=getTodayStr();
+    var d=new Date();var days=['日','一','二','三','四','五','六'];
+    document.getElementById('todaySolar').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+days[d.getDay()];
+    updateNextAnniv();
+}
+function getNextAnniversary(){
+    var saved=lsGet('anniversaries');if(!saved)return null;
+    try{var list=JSON.parse(saved);}catch(e){return null;}
+    var now=new Date();now.setHours(0,0,0,0);var best=null;
+    list.forEach(function(a){
+        if(!a.date||!a.name)return;
+        var parts=a.date.split('-');
+        var thisYear=new Date(now.getFullYear(),parseInt(parts[1])-1,parseInt(parts[2]));
+        if(thisYear<now)thisYear=new Date(now.getFullYear()+1,parseInt(parts[1])-1,parseInt(parts[2]));
+        var diff=Math.ceil((thisYear-now)/(1000*60*60*24));
+        if(diff===0)diff=365;
+        if(!best||diff<best.days)best={name:a.name,days:diff};
+    });
+    return best;
+}
+function updateNextAnniv(){
+    var el=document.getElementById('nextAnniv');var an=getNextAnniversary();
+    if(an){el.querySelector('.anniv-name').textContent='💕 '+an.name;el.querySelector('.anniv-days').textContent=an.days;el.querySelector('.anniv-unit').textContent='天后';}
+    else{el.querySelector('.anniv-name').textContent='💕 下一个纪念日';el.querySelector('.anniv-days').textContent='--';el.querySelector('.anniv-unit').textContent='设置纪念日开始';}
+}
+
+// ============ 便签 ============
+function renderQuickNotes(){
+    var el=document.getElementById('quickNotes');var saved=lsGet('quickNotes');var notes=saved?JSON.parse(saved):[];
+    var html=notes.map(function(n,i){return '<div class="qn-card"><div class="qn-date">'+n.date+'</div><div class="qn-text" contenteditable="true" data-i="'+i+'">'+n.text+'</div><div class="qn-actions"><button onclick="deleteNote('+i+')">删除</button></div></div>';}).join('');
+    html+='<div class="qn-add" onclick="addNote()">+</div>';
+    el.innerHTML=html;
+    el.querySelectorAll('.qn-text').forEach(function(t){t.addEventListener('blur',function(){var i=parseInt(this.dataset.i);notes[i].text=this.textContent.trim();lsSet('quickNotes',JSON.stringify(notes));});});
+}
+function addNote(){
+    var saved=lsGet('quickNotes');var notes=saved?JSON.parse(saved):[];
+    notes.unshift({text:'新便签',date:new Date().toLocaleDateString('zh-CN')});
+    lsSet('quickNotes',JSON.stringify(notes));renderQuickNotes();
+}
+function deleteNote(i){
+    var saved=lsGet('quickNotes');var notes=saved?JSON.parse(saved):[];
+    notes.splice(i,1);lsSet('quickNotes',JSON.stringify(notes));renderQuickNotes();
+}
+
+// ============ 恋爱小贴士 ============
+var loveTips=[
+    {icon:'💌',text:'每天至少说一次"我爱你"',extra:'不要觉得老夫老妻就不需要，爱需要表达。'},
+    {icon:'🤗',text:'给对方一个拥抱，至少20秒',extra:'研究表明20秒以上的拥抱可以释放催产素，增进感情。'},
+    {icon:'🎧',text:'一起听一首歌',extra:'分享音乐是分享心情的最好方式。'},
+    {icon:'📝',text:'写下今天让你感动的小事',extra:'记录美好，让回忆有迹可循。'},
+    {icon:'🍳',text:'为对方做一顿饭',extra:'不一定要多好吃，心意最重要。'},
+    {icon:'🌙',text:'睡前互道晚安',extra:'简单的仪式感，让每一天都有温柔的结尾。'},
+    {icon:'📸',text:'拍一张合照',extra:'记录在一起的每一刻，以后翻看会很幸福。'},
+    {icon:'💐',text:'送一束花',extra:'不需要特别的日子，随时都可以给惊喜。'},
+    {icon:'🤝',text:'认真倾听对方说的话',extra:'放下手机，看着对方的眼睛，认真听。'},
+    {icon:'❤️‍🔥',text:'回忆你们第一次见面的场景',extra:'不忘初心，方得始终。'}
+];
+function refreshTip(){
+    var tip=loveTips[Math.floor(Math.random()*loveTips.length)];
+    var el=document.getElementById('tipArea');
+    el.innerHTML='<div class="tip-card"><div class="tip-icon">'+tip.icon+'</div><div><div class="tip-text">'+tip.text+'</div><div class="tip-extra">'+tip.extra+'</div><div class="tip-expand" onclick="this.parentElement.querySelector(\'.tip-extra\').style.display=\'block\';this.style.display=\'none\'">展开详情 ▾</div></div></div>';
+}
+
+// ============ 相册 ============
+function triggerUpload(idx){
+    var f=document.createElement('input');f.type='file';f.accept='image/*';
+    f.onchange=function(e){
+        var file=e.target.files[0];if(!file)return;
+        var reader=new FileReader();
+        reader.onload=function(ev){
+            var img=document.getElementById('galleryImg'+idx);
+            img.src=ev.target.result;
+            lsSet('uploadedPhoto_'+idx,ev.target.result);
+        };
+        reader.readAsDataURL(file);
+    };
+    f.click();
+}
+
+// ============ 倒计时 ============
+function parseLocalDate(str){
+    if(!str)return null;
+    var p=str.split('-');
+    return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
+}
+function calcCountdown(){
+    var targetStr=document.getElementById('countdownDate').value;
+    var target=parseLocalDate(targetStr);if(!target)return;
+    var now=new Date();now.setHours(0,0,0,0);
+    var diff=Math.ceil((target-now)/(1000*60*60*24));
+    var boxes=document.getElementById('countdownBoxes');
+    if(diff<=0){boxes.innerHTML='<div class="countdown-box"><div class="countdown-number" style="color:#e91e8c;">0</div><div class="countdown-unit">已到达！</div></div>';return;}
+    var months=Math.floor(diff/30);var days=diff%30;
+    var html='<div class="countdown-box"><div class="countdown-number">'+months+'</div><div class="countdown-unit">个月</div></div>';
+    html+='<div class="countdown-box"><div class="countdown-number">'+days+'</div><div class="countdown-unit">天</div></div>';
+    html+='<div class="countdown-box"><div class="countdown-number">'+diff+'</div><div class="countdown-unit">总共天数</div></div>';
+    boxes.innerHTML=html;
+}
+function setCountdownDate(d){
+    document.getElementById('countdownDate').value=d;
+    lsSet('countdownDate',d);calcCountdown();
+}
+
+// ============ 在一起计时 ============
+function getStartDate(){return lsGet('startDate')||'2024-12-25';}
+function saveStartDate(){
+    var v=document.getElementById('startDate').value;
+    lsSet('startDate',v);updateHeroDate();updateTogetherTimer();
+}
+function updateHeroDate(){
+    var saved=lsGet('startDate');var display=saved||'2024-12-25';
+    var el=document.getElementById('heroDate');if(el)el.textContent=display;
+}
+function updateTogetherTimer(){
+    var saved=lsGet('startDate')||'2024-12-25';
+    var parts=saved.split('-');
+    var start=new Date(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
+    var now=new Date();var diff=now-start;if(diff<0)diff=0;
+    var totalSec=Math.floor(diff/1000);
+    var days=Math.floor(totalSec/86400);var hours=Math.floor((totalSec%86400)/3600);
+    var mins=Math.floor((totalSec%3600)/60);var secs=totalSec%60;
+    var el=document.getElementById('togetherTimer');
+    if(el)el.textContent=days+'天 '+hours+'小时 '+mins+'分 '+secs+'秒';
+}
+
+// ============ 日记 ============
+var diaryMood='';
+function selectMood(el,m){
+    document.querySelectorAll('#diaryForm .mood-btn').forEach(function(b){b.classList.remove('selected');});
+    el.classList.add('selected');diaryMood=m;
+}
+function saveDiary(){
+    var date=document.getElementById('diaryDate').value;
+    var content=document.getElementById('diaryContent').value.trim();
+    if(!content){alert('请输入日记内容');return;}
+    var saved=lsGet('diaries');var diaries=saved?JSON.parse(saved):[];
+    diaries.unshift({date:date,mood:diaryMood,content:content,time:new Date().toLocaleString('zh-CN')});
+    lsSet('diaries',JSON.stringify(diaries));
+    document.getElementById('diaryContent').value='';renderDiaries();
+}
+function renderDiaries(){
+    var el=document.getElementById('diaryList');var saved=lsGet('diaries');var diaries=saved?JSON.parse(saved):[];
+    if(!diaries.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:30px;">还没有日记，写下第一篇吧 📝</div>';return;}
+    el.innerHTML=diaries.map(function(d,i){
+        return '<div class="diary-card"><div class="diary-header"><span class="diary-date">📅 '+d.date+'</span><span class="diary-mood">'+d.mood+'</span></div><div class="diary-content">'+d.content.replace(/\n/g,'<br>')+'</div><button class="diary-del" onclick="deleteDiary('+i+')">✕</button></div>';
+    }).join('');
+}
+function deleteDiary(i){
+    if(!confirm('确定删除这篇日记？'))return;
+    var saved=lsGet('diaries');var diaries=saved?JSON.parse(saved):[];
+    diaries.splice(i,1);lsSet('diaries',JSON.stringify(diaries));renderDiaries();
+}
+
+// ============ 梦想 ============
+function addDream(who){
+    var input=document.getElementById('dreamInput'+(who==='his'?'His':'Hers'));
+    var text=input.value.trim();if(!text)return;
+    var key='dreams_'+who;var saved=lsGet(key);var dreams=saved?JSON.parse(saved):[];
+    dreams.push({text:text,done:false});lsSet(key,JSON.stringify(dreams));
+    input.value='';renderDreams(who);
+}
+function toggleDream(who,i){
+    var key='dreams_'+who;var saved=lsGet(key);var dreams=saved?JSON.parse(saved):[];
+    dreams[i].done=!dreams[i].done;lsSet(key,JSON.stringify(dreams));renderDreams(who);
+}
+function deleteDream(who,i){
+    var key='dreams_'+who;var saved=lsGet(key);var dreams=saved?JSON.parse(saved):[];
+    dreams.splice(i,1);lsSet(key,JSON.stringify(dreams));renderDreams(who);
+}
+function renderDreams(who){
+    var key='dreams_'+who;var saved=lsGet(key);var dreams=saved?JSON.parse(saved):[];
+    var el=document.getElementById('dreamList'+(who==='his'?'His':'Hers'));
+    if(!dreams.length){el.innerHTML='<li style="text-align:center;color:#aaa;padding:20px;">还没有梦想</li>';return;}
+    var done=dreams.filter(function(d){return d.done;}).length;
+    el.innerHTML=dreams.map(function(d,i){
+        return '<li class="dream-item"><input type="checkbox" '+(d.done?'checked':'')+' onchange="toggleDream(\''+who+'\','+i+')"><span class="'+(d.done?'done':'')+'">'+d.text+'</span><button class="dream-del" onclick="deleteDream(\''+who+'\','+i+')">✕</button></li>';
+    }).join('');
+    el.parentElement.querySelector('.dream-progress').textContent='完成进度：'+done+'/'+dreams.length;
+}
+
+// ============ 爱好 ============
+function addHobby(who){
+    var formId=who==='his'?'hobbyFormHis':'hobbyFormHers';
+    var nameInput=document.querySelector('#'+formId+' input');
+    var name=nameInput.value.trim();if(!name)return;
+    var key='hobbies_'+who;var saved=lsGet(key);var hobbies=saved?JSON.parse(saved):[];
+    hobbies.push({name:name});lsSet(key,JSON.stringify(hobbies));
+    nameInput.value='';renderHobbies(who);
+}
+function deleteHobby(who,i){
+    var key='hobbies_'+who;var saved=lsGet(key);var hobbies=saved?JSON.parse(saved):[];
+    hobbies.splice(i,1);lsSet(key,JSON.stringify(hobbies));renderHobbies(who);
+}
+function renderHobbies(who){
+    var key='hobbies_'+who;var saved=lsGet(key);var hobbies=saved?JSON.parse(saved):[];
+    var el=document.getElementById('hobbyGrid'+(who==='his'?'His':'Hers'));
+    var icons=['🎮','⚽','🎵','📚','🎨','🎬','✈️','🍜','📷','💻','🎸','🏋️'];
+    el.innerHTML=hobbies.map(function(h,i){
+        return '<div class="hobby-item"><div class="hobby-icon">'+(icons[i%icons.length])+'</div><div class="hobby-name">'+h.name+'</div><button class="hobby-del" onclick="deleteHobby(\''+who+'\','+i+')">✕</button></div>';
+    }).join('');
+}
+
+// ============ 经期记录 ============
+var periodStartDate='',periodCycle=28;
+function loadPeriod(){
+    periodStartDate=lsGet('periodStartDate')||'';
+    periodCycle=parseInt(lsGet('periodCycle'))||28;
+    document.getElementById('periodStartInput').value=periodStartDate;
+    document.getElementById('periodCycleInput').value=periodCycle;
+    updatePeriodDisplay();renderPeriodCal();
+}
+function savePeriodStart(){
+    periodStartDate=document.getElementById('periodStartInput').value;
+    lsSet('periodStartDate',periodStartDate);updatePeriodDisplay();renderPeriodCal();
+}
+function savePeriodCycle(){
+    periodCycle=parseInt(document.getElementById('periodCycleInput').value)||28;
+    lsSet('periodCycle',periodCycle);updatePeriodDisplay();renderPeriodCal();
+}
+function updatePeriodDisplay(){
+    var el=document.getElementById('periodInfo');
+    if(!periodStartDate){el.innerHTML='<div class="period-card"><div class="p-label">请设置经期开始日期</div></div>';return;}
+    var start=parseLocalDate(periodStartDate);var now=new Date();now.setHours(0,0,0,0);
+    var diff=Math.floor((now-start)/(1000*60*60*24));
+    var dayInCycle=(diff%periodCycle)+1;
+    var phase='',phaseIcon='',phaseColor='';
+    if(dayInCycle<=7){phase='月经期';phaseIcon='🩸';phaseColor='#e53935';}
+    else if(dayInCycle<=14){phase='卵泡期';phaseIcon='🌱';phaseColor='#4caf50';}
+    else if(dayInCycle<=16){phase='排卵期';phaseIcon='🌸';phaseColor='#ff9800';}
+    else{phase='黄体期';phaseIcon='🍂';phaseColor='#9c27b0';}
+    var daysUntil=periodCycle-dayInCycle+1;
+    el.innerHTML='<div class="period-card"><div class="p-label">'+phaseIcon+' 当前阶段</div><div class="p-value" style="color:'+phaseColor+'">'+phase+'</div><div class="p-sub">周期第 '+dayInCycle+' 天</div></div><div class="period-card"><div class="p-label">📅 预计下次</div><div class="p-value">'+daysUntil+'</div><div class="p-sub">天后</div></div>';
+}
+function renderPeriodCal(){
+    var cal=document.getElementById('periodCalBody');
+    if(!periodStartDate){cal.innerHTML='<tr><td colspan="7" style="text-align:center;color:#aaa;padding:20px;">请先设置经期开始日期</td></tr>';return;}
+    var now=new Date();var year=now.getFullYear(),month=now.getMonth();
+    var firstDay=new Date(year,month,1).getDay();var daysInMonth=new Date(year,month+1,0).getDate();
+    var start=parseLocalDate(periodStartDate);var html='';var day=1;
+    for(var w=0;w<6;w++){
+        html+='<tr>';
+        for(var d=0;d<7;d++){
+            if(w===0&&d<firstDay){html+='<td class="empty"></td>';continue;}
+            if(day>daysInMonth){html+='<td class="empty"></td>';continue;}
+            var date=new Date(year,month,day);
+            var diff=Math.floor((date-start)/(1000*60*60*24));
+            var cycleDay=(diff%periodCycle)+1;var cls='';
+            if(diff>=0){if(cycleDay<=7)cls='period-day';else if(cycleDay>=periodCycle-2)cls='predict';}
+            if(day===now.getDate()&&month===now.getMonth())cls='today';
+            html+='<td class="'+cls+'">'+day+'</td>';day++;
+        }
+        html+='</tr>';if(day>daysInMonth)break;
+    }
+    cal.innerHTML=html;
+}
+
+// ============ 留言板 ============
+function saveGuestbook(){
+    var name=document.getElementById('gbName').value.trim();
+    var text=document.getElementById('gbText').value.trim();
+    if(!text){alert('请输入留言内容');return;}
+    var saved=lsGet('guestbook');var list=saved?JSON.parse(saved):[];
+    list.unshift({name:name||'匿名',text:text,time:new Date().toLocaleString('zh-CN')});
+    lsSet('guestbook',JSON.stringify(list));
+    document.getElementById('gbText').value='';renderGuestbook();
+}
+function renderGuestbook(){
+    var el=document.getElementById('gbList');var saved=lsGet('guestbook');var list=saved?JSON.parse(saved):[];
+    if(!list.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:30px;">还没有留言 💬</div>';return;}
+    el.innerHTML=list.map(function(m,i){
+        return '<div class="gb-card"><div class="gb-name">💌 '+m.name+'</div><div class="gb-text">'+m.text.replace(/\n/g,'<br>')+'</div><div class="card-date">'+m.time+'</div><button class="gb-del" onclick="deleteGuestbook('+i+')">✕</button></div>';
+    }).join('');
+}
+function deleteGuestbook(i){
+    if(!confirm('确定删除这条留言？'))return;
+    var saved=lsGet('guestbook');var list=saved?JSON.parse(saved):[];
+    list.splice(i,1);lsSet('guestbook',JSON.stringify(list));renderGuestbook();
+}
+
+// ============ 纪念日 ============
+function loadAnniversaries(){
+    var saved=lsGet('anniversaries');
+    var list=saved?JSON.parse(saved):[{name:'在一起纪念日',date:'2024-12-25'}];
+    renderAnniversaries(list);
+}
+function renderAnniversaries(list){
+    var el=document.getElementById('annivList');
+    if(!list.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:10px;">暂无纪念日</div>';return;}
+    el.innerHTML=list.map(function(a,i){
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border:1px solid #f0f0f0;border-radius:10px;margin-bottom:8px;"><div><strong>'+a.name+'</strong><div style="font-size:0.85rem;color:#888;">'+a.date+'</div></div><button onclick="deleteAnniversary('+i+')" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:1.2rem;">✕</button></div>';
+    }).join('');
+}
+function addAnniversary(){
+    var name=prompt('纪念日名称：');if(!name)return;
+    var date=prompt('日期（格式：YYYY-MM-DD）：');if(!date)return;
+    var saved=lsGet('anniversaries');var list=saved?JSON.parse(saved):[];
+    list.push({name:name,date:date});lsSet('anniversaries',JSON.stringify(list));renderAnniversaries(list);
+}
+function deleteAnniversary(i){
+    var saved=lsGet('anniversaries');var list=saved?JSON.parse(saved):[];
+    list.splice(i,1);lsSet('anniversaries',JSON.stringify(list));renderAnniversaries(list);
+}
+
+// ============ 音乐 ============
+var musicPlaying=false;var bgMusic=null;
+function toggleMusic(){
+    if(!bgMusic){bgMusic=new Audio('https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3');bgMusic.loop=true;}
+    if(musicPlaying){bgMusic.pause();document.getElementById('musicBtn').classList.remove('playing');}
+    else{bgMusic.play();document.getElementById('musicBtn').classList.add('playing');}
+    musicPlaying=!musicPlaying;
+}
+
+// ============ 彩蛋 ============
+function openEasterEgg(){document.getElementById('lovePopup').classList.add('show');}
+function closeEasterEgg(){document.getElementById('lovePopup').classList.remove('show');}
+
+// ============ 找回账号 ============
+function recoverBack(){
+    document.getElementById('recoverStep1').style.display='block';
+    document.getElementById('recoverStep2').style.display='none';
+    document.getElementById('recoverStep3').style.display='none';
+}
+function recoverStep1(){
+    var user=document.getElementById('recoverUser').value.trim();
+    if(!user){document.getElementById('recoverMsg1').textContent='请输入用户名';document.getElementById('recoverMsg1').className='modal-msg err';return;}
+    var data=localStorage.getItem('bind_'+user);
+    if(!data){document.getElementById('recoverMsg1').textContent='该用户未绑定账号';document.getElementById('recoverMsg1').className='modal-msg err';return;}
+    var bind=JSON.parse(data);
+    if(!bind.question||!bind.answer){document.getElementById('recoverMsg1').textContent='绑定信息不完整';document.getElementById('recoverMsg1').className='modal-msg err';return;}
+    document.getElementById('recoverQuestion').textContent='密保问题：'+bind.question;
+    document.getElementById('recoverStep1').style.display='none';
+    document.getElementById('recoverStep2').style.display='block';
+}
+function recoverStep2(){
+    var user=document.getElementById('recoverUser').value.trim();
+    var answer=document.getElementById('recoverAnswer').value.trim();
+    if(!answer){document.getElementById('recoverMsg2').textContent='请输入密保答案';document.getElementById('recoverMsg2').className='modal-msg err';return;}
+    var data=localStorage.getItem('bind_'+user);
+    if(!data){document.getElementById('recoverMsg2').textContent='用户数据异常';document.getElementById('recoverMsg2').className='modal-msg err';return;}
+    var bind=JSON.parse(data);
+    if(answer!==bind.answer){document.getElementById('recoverMsg2').textContent='密保答案错误';document.getElementById('recoverMsg2').className='modal-msg err';return;}
+    var html='<div class="result-item"><div class="result-label">房间密码</div><div class="result-value">'+bind.roomPass+'</div></div>';
+    html+='<div class="result-item"><div class="result-label">邀请码</div><div class="result-value">'+bind.inviteCode+'</div></div>';
+    if(bind.phone)html+='<div class="result-item"><div class="result-label">手机号</div><div class="result-value">'+bind.phone+'</div></div>';
+    if(bind.email)html+='<div class="result-item"><div class="result-label">邮箱</div><div class="result-value">'+bind.email+'</div></div>';
+    document.getElementById('recoverResult').innerHTML=html;
+    document.getElementById('recoverStep2').style.display='none';
+    document.getElementById('recoverStep3').style.display='block';
+}
+
+// ============ 绑定账号 ============
+function loadBind(){
+    var user=localStorage.getItem('lastLoginUser');if(!user)return;
+    var data=localStorage.getItem('bind_'+user);var statusEl=document.getElementById('bindStatus');
+    if(data){
+        var bind=JSON.parse(data);
+        statusEl.className='bind-status bound';statusEl.textContent='✅ 已绑定（'+user+'）';
+        document.getElementById('bindPhone').value=bind.phone||'';
+        document.getElementById('bindEmail').value=bind.email||'';
+        document.getElementById('bindQuestion').value=bind.question||'';
+        document.getElementById('bindAnswer').value='';
+        document.getElementById('bindAnswer').placeholder='已设置（如需修改请输入新答案）';
+    }else{statusEl.className='bind-status unbound';statusEl.textContent='⚠️ 未绑定（建议绑定以便找回账号）';}
+}
+function saveBind(){
+    var user=localStorage.getItem('lastLoginUser');if(!user){showBindMsg('请先登录',true);return;}
+    var phone=document.getElementById('bindPhone').value.trim();
+    var email=document.getElementById('bindEmail').value.trim();
+    var question=document.getElementById('bindQuestion').value;
+    var answer=document.getElementById('bindAnswer').value.trim();
+    if(!question){showBindMsg('请选择密保问题',true);return;}
+    if(!answer){var existing=localStorage.getItem('bind_'+user);if(existing)answer=JSON.parse(existing).answer;else{showBindMsg('请填写密保答案',true);return;}}
+    var pass=localStorage.getItem('lastLoginPass')||'';
+    var code=localStorage.getItem('lastLoginCode')||'';
+    localStorage.setItem('bind_'+user,JSON.stringify({phone:phone,email:email,question:question,answer:answer,roomPass:pass,inviteCode:code}));
+    showBindMsg('绑定成功！',false);loadBind();
+}
+function showBindMsg(text,isErr){
+    var el=document.getElementById('bindMsg');el.textContent=text;
+    el.className='modal-msg'+(isErr?' err':' ok');
+    setTimeout(function(){el.textContent='';},3000);
+}
+
+// ============ 初始化 ============
+var _inited=false;
+function initAfterLogin(){
+    if(_inited)return;_inited=true;
+    // 时间线内容恢复
+    (function(){var items=document.querySelectorAll('.timeline-item');items.forEach(function(item,i){item.querySelectorAll('[contenteditable="true"][data-field]').forEach(function(f){var k='tl_'+i+'_'+f.dataset.field,s=lsGet(k);if(s)f.textContent=s;f.addEventListener('blur',function(){lsSet(k,f.textContent.trim());});if(f.dataset.field!=='desc')f.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();f.blur();}});});});})();
+    // 时间线照片恢复
+    (function(){var items=document.querySelectorAll('.timeline-item');items.forEach(function(item,i){var s=lsGet('tl_photo_'+i);if(s)item.querySelector('.timeline-photo').src=s;});})();
+    // 画廊照片恢复
+    (function(){document.querySelectorAll('.gallery-grid .polaroid').forEach(function(p,i){var s=lsGet('uploadedPhoto_'+i);if(s)p.querySelector('img').src=s;});})();
+    // 仪表盘
+    initDashboard();setInterval(updateNextAnniv,60000);
+    // 便签
+    renderQuickNotes();
+    // 在一起计时
+    document.getElementById('startDate').value=getStartDate();updateHeroDate();updateTogetherTimer();setInterval(updateTogetherTimer,1000);
+    // 日记
+    document.getElementById('diaryDate').value=new Date().toISOString().slice(0,10);
+    document.querySelector('#diaryForm .mood-btn').classList.add('selected');
+    renderDiaries();
+    // 梦境
+    document.getElementById('dreamDateHis').value=new Date().toISOString().slice(0,10);
+    document.getElementById('dreamDateHers').value=new Date().toISOString().slice(0,10);
+    renderDreams('his');renderDreams('hers');
+    // 爱好
+    renderHobbies('his');renderHobbies('hers');
+    // 绑定
+    loadBind();
+    // 彩蛋事件
+    document.getElementById('lovePopup').addEventListener('click',function(e){if(e.target===this)closeEasterEgg();});
+    // 滚动动画
+    var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+    document.querySelectorAll('.timeline-item,.polaroid').forEach(function(el,i){el.style.transitionDelay=(i*0.1)+'s';obs.observe(el);});
+}
 
 // 自动登录
 try{
@@ -903,11 +1333,14 @@ try{
         document.getElementById('main-page').style.display='block';
         document.getElementById('loading-screen').classList.remove('hidden');
         setTimeout(function(){document.getElementById('loading-screen').classList.add('hidden');},1800);
+        try{initAfterLogin();}catch(e){console.error('init error:',e);}
     }
 }catch(e){
     localStorage.removeItem('lastLoginUser');
     localStorage.removeItem('lastLoginPass');
     localStorage.removeItem('lastLoginCode');
+    document.getElementById('login-page').style.display='flex';
+    document.getElementById('main-page').style.display='none';
 }
 </script>
 </body>
