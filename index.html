@@ -1524,32 +1524,12 @@
         setTimeout(function(){el.textContent='';},3000);
     }
 
-    // ============ 自动登录 ============
-    (function(){
-        try {
-            var lastUser = localStorage.getItem('lastLoginUser');
-            var lastPass = localStorage.getItem('lastLoginPass');
-            var lastCode = localStorage.getItem('lastLoginCode');
-            if(lastUser) document.getElementById('loginUser').value = lastUser;
-            if(lastPass) document.getElementById('loginPass').value = lastPass;
-            if(lastCode) document.getElementById('loginCode').value = lastCode;
-            if(lastUser && lastPass && lastCode && _ck(lastCode)){
-                storagePrefix = 'love_data_' + lastPass + '_';
-                document.getElementById('login-page').style.display='none';
-                document.getElementById('main-page').style.display='block';
-                setTimeout(function(){ document.getElementById('loading-screen').classList.add('hidden'); }, 1800);
-                initAfterLogin();
-            }
-        } catch(e) {
-            // 自动登录失败，清除旧数据，显示登录页
-            localStorage.removeItem('lastLoginUser');
-            localStorage.removeItem('lastLoginPass');
-            localStorage.removeItem('lastLoginCode');
-            document.getElementById('login-page').style.display='flex';
-            document.getElementById('main-page').style.display='none';
-            document.getElementById('loading-screen').classList.add('hidden');
-        }
-    })();
+    // ============ 自动登录（暂时禁用用于调试） ============
+    // 清除旧数据，强制显示登录页
+    localStorage.removeItem('lastLoginUser');
+    localStorage.removeItem('lastLoginPass');
+    localStorage.removeItem('lastLoginCode');
+    document.getElementById('login-page').style.display='flex';
     </script>
 </body>
 </html>
