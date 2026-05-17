@@ -509,7 +509,61 @@
         .login-card .login-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(233,30,140,0.4); }
         .login-card .login-hint { margin-top: 18px; font-size: 0.85rem; color: var(--text-light); }
         .login-error { color: #e53935; font-size: 0.9rem; margin-top: 8px; min-height: 20px; }
-    </style>
+        .login-recover { margin-top: 10px; font-size: 0.85rem; }
+        .login-recover a { color: var(--pink-dark); cursor: pointer; text-decoration: underline; }
+
+        /* ============ 找回/绑定弹窗 ============ */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+            z-index: 10003; display: none; justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: #fff; border-radius: 20px; padding: 32px 28px;
+            width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2); animation: loginFadeIn 0.4s ease;
+        }
+        .modal-box h3 { font-family: 'Ma Shan Zheng',cursive; font-size: 1.8rem; color: var(--pink-deep); margin-bottom: 6px; text-align: center; }
+        .modal-box .modal-sub { text-align: center; font-size: 0.9rem; color: var(--text-light); margin-bottom: 20px; }
+        .modal-box input, .modal-box select {
+            width: 100%; padding: 12px 16px; border: 2px solid var(--pink-light); border-radius: 12px;
+            font-family: 'Noto Serif SC',serif; font-size: 1rem; color: var(--text-dark);
+            background: var(--white); outline: none; margin-bottom: 12px; transition: border-color 0.3s;
+        }
+        .modal-box input:focus, .modal-box select:focus { border-color: var(--pink-dark); }
+        .modal-box label { font-size: 0.9rem; color: var(--text-light); margin-bottom: 4px; display: block; }
+        .modal-box .btn-row { display: flex; gap: 10px; margin-top: 6px; }
+        .modal-box .btn-row button { flex: 1; padding: 12px; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer; font-family: 'Noto Serif SC',serif; }
+        .modal-box .btn-confirm { background: linear-gradient(135deg,var(--pink-dark),var(--pink-deep)); color: #fff; }
+        .modal-box .btn-cancel { background: #f5f5f5; color: #666; border: 1px solid #ddd; }
+        .modal-box .btn-confirm:hover { opacity: 0.9; }
+        .modal-box .btn-cancel:hover { background: #eee; }
+        .modal-box .modal-msg { text-align: center; font-size: 0.9rem; min-height: 20px; margin-bottom: 8px; }
+        .modal-box .modal-msg.ok { color: #2e7d32; }
+        .modal-box .modal-msg.err { color: #e53935; }
+        .modal-box .close-modal { position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 1.5rem; color: #aaa; cursor: pointer; }
+        .modal-box .close-modal:hover { color: #333; }
+        .modal-box .result-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; padding: 16px; margin-top: 12px; }
+        .modal-box .result-box .result-item { margin-bottom: 8px; }
+        .modal-box .result-box .result-label { font-size: 0.85rem; color: #666; }
+        .modal-box .result-box .result-value { font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: 700; color: #166534; }
+
+        /* 绑定页面 */
+        .bind-section { max-width: 500px; margin: 0 auto; }
+        .bind-card { background: rgba(255,255,255,0.85); border-radius: 20px; padding: 28px; box-shadow: var(--shadow-sm); }
+        .bind-card h3 { font-family: 'Ma Shan Zheng',cursive; font-size: 1.8rem; color: var(--pink-deep); margin-bottom: 16px; text-align: center; }
+        .bind-card label { font-size: 0.9rem; color: var(--text-light); margin-bottom: 4px; display: block; }
+        .bind-card input, .bind-card select {
+            width: 100%; padding: 12px 16px; border: 2px solid var(--pink-light); border-radius: 12px;
+            font-family: 'Noto Serif SC',serif; font-size: 1rem; color: var(--text-dark);
+            background: var(--white); outline: none; margin-bottom: 12px; transition: border-color 0.3s;
+        }
+        .bind-card input:focus { border-color: var(--pink-dark); }
+        .bind-status { text-align: center; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 0.95rem; }
+        .bind-status.bound { background: #f0fdf4; color: #166534; border: 1px solid #86efac; }
+        .bind-status.unbound { background: #fff7ed; color: #9a3412; border: 1px solid #fdba74; }
 </head>
 <body>
 
@@ -525,6 +579,42 @@
             <div class="login-error" id="loginError"></div>
             <button class="login-btn" id="loginBtn" onclick="doLogin()">💕 进入我们的小屋</button>
             <div class="login-hint">💡 输入邀请码和房间密码，开启属于你们的空间</div>
+            <div class="login-recover"><a onclick="openRecover()">🔑 找回账号</a></div>
+        </div>
+    </div>
+
+    <!-- 找回账号弹窗 -->
+    <div class="modal-overlay" id="recoverModal">
+        <div class="modal-box" style="position:relative;">
+            <button class="close-modal" onclick="closeRecover()">&times;</button>
+            <h3>🔑 找回账号</h3>
+            <!-- 步骤1：输入用户名 -->
+            <div id="recoverStep1">
+                <div class="modal-sub">输入你绑定时使用的用户名</div>
+                <input type="text" id="recoverUser" placeholder="你的名字" maxlength="20">
+                <div class="modal-msg" id="recoverMsg1"></div>
+                <div class="btn-row">
+                    <button class="btn-confirm" onclick="recoverStep1()">下一步</button>
+                </div>
+            </div>
+            <!-- 步骤2：回答密保问题 -->
+            <div id="recoverStep2" style="display:none;">
+                <div class="modal-sub" id="recoverQuestion"></div>
+                <input type="text" id="recoverAnswer" placeholder="请输入密保答案" maxlength="50">
+                <div class="modal-msg" id="recoverMsg2"></div>
+                <div class="btn-row">
+                    <button class="btn-confirm" onclick="recoverStep2()">验证</button>
+                    <button class="btn-cancel" onclick="recoverBack()">返回</button>
+                </div>
+            </div>
+            <!-- 步骤3：显示结果 -->
+            <div id="recoverStep3" style="display:none;">
+                <div class="modal-sub">✅ 验证成功，以下是你绑定的信息</div>
+                <div class="result-box" id="recoverResult"></div>
+                <div class="btn-row" style="margin-top:16px;">
+                    <button class="btn-confirm" onclick="closeRecover()">确定</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -577,6 +667,7 @@
             <li><a href="#hobby" class="nav-hobby" onclick="closeMenu()">💝 爱好</a></li>
             <li><a href="#period" class="nav-period" onclick="closeMenu()">🌸 周期</a></li>
             <li><a href="#guestbook" class="nav-guest" onclick="closeMenu()">✉️ 留言</a></li>
+            <li><a href="#bindaccount" class="nav-hobby" onclick="closeMenu()">🔗 绑定</a></li>
             <li><a href="#" class="nav-logout" onclick="doLogout();closeMenu()">🚪 退出</a></li>
         </ul>
     </nav>
@@ -869,6 +960,37 @@
                     <button class="msg-delete" onclick="deleteMessage(this)" title="删除">×</button>
                     <div class="msg-header"><span class="msg-name">💕 最爱你的人</span><span class="msg-time">刚刚</span></div>
                     <div class="msg-content">遇见你，是我这辈子最幸运的事。未来的每一天，都想和你一起度过。</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 10. 绑定账号 ========== -->
+    <section class="section" id="bindaccount">
+        <div class="section-title">绑定账号</div>
+        <div class="section-subtitle">Protect your account</div>
+        <div class="bind-section">
+            <div class="bind-card">
+                <div id="bindStatus"></div>
+                <label>手机号（可选）</label>
+                <input type="tel" id="bindPhone" placeholder="用于记录，找回时显示" maxlength="20">
+                <label>邮箱（可选）</label>
+                <input type="email" id="bindEmail" placeholder="用于记录，找回时显示" maxlength="50">
+                <label>密保问题</label>
+                <select id="bindQuestion">
+                    <option value="我们第一次见面的地点是？">我们第一次见面的地点是？</option>
+                    <option value="我最喜欢的水果是？">我最喜欢的水果是？</option>
+                    <option value="我们的纪念日是哪天？">我们的纪念日是哪天？</option>
+                    <option value="我最想去的地方是？">我最想去的地方是？</option>
+                    <option value="我的生日是哪天？">我的生日是哪天？</option>
+                    <option value="custom">自定义问题</option>
+                </select>
+                <input type="text" id="bindCustomQ" placeholder="自定义密保问题" style="display:none;">
+                <label>密保答案</label>
+                <input type="text" id="bindAnswer" placeholder="请牢记此答案" maxlength="50">
+                <div class="modal-msg" id="bindMsg"></div>
+                <div class="btn-row">
+                    <button class="btn-confirm" onclick="saveBind()">💾 保存绑定</button>
                 </div>
             </div>
         </div>
@@ -1297,11 +1419,110 @@
         renderDreams('his');renderDreams('hers');
         // 爱好
         renderHobbies('his');renderHobbies('hers');
+        // 绑定
+        loadBind();
         // 彩蛋事件
         document.getElementById('lovePopup').addEventListener('click',function(e){if(e.target===this)closeEasterEgg();});
         // 滚动动画
         var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
         document.querySelectorAll('.timeline-item,.polaroid').forEach(function(el,i){el.style.transitionDelay=(i*0.1)+'s';obs.observe(el);});
+    }
+
+    // ============ 找回账号 ============
+    function openRecover(){
+        document.getElementById('recoverModal').classList.add('show');
+        document.getElementById('recoverStep1').style.display='block';
+        document.getElementById('recoverStep2').style.display='none';
+        document.getElementById('recoverStep3').style.display='none';
+        document.getElementById('recoverUser').value='';
+        document.getElementById('recoverAnswer').value='';
+        document.getElementById('recoverMsg1').textContent='';
+        document.getElementById('recoverMsg2').textContent='';
+    }
+    function closeRecover(){ document.getElementById('recoverModal').classList.remove('show'); }
+    function recoverBack(){
+        document.getElementById('recoverStep1').style.display='block';
+        document.getElementById('recoverStep2').style.display='none';
+        document.getElementById('recoverStep3').style.display='none';
+    }
+    function recoverStep1(){
+        var user=document.getElementById('recoverUser').value.trim();
+        if(!user){document.getElementById('recoverMsg1').textContent='请输入用户名';document.getElementById('recoverMsg1').className='modal-msg err';return;}
+        var data=localStorage.getItem('bind_'+user);
+        if(!data){document.getElementById('recoverMsg1').textContent='该用户未绑定账号';document.getElementById('recoverMsg1').className='modal-msg err';return;}
+        var bind=JSON.parse(data);
+        if(!bind.question||!bind.answer){document.getElementById('recoverMsg1').textContent='绑定信息不完整';document.getElementById('recoverMsg1').className='modal-msg err';return;}
+        document.getElementById('recoverQuestion').textContent='密保问题：'+bind.question;
+        document.getElementById('recoverStep1').style.display='none';
+        document.getElementById('recoverStep2').style.display='block';
+        document.getElementById('recoverMsg2').textContent='';
+    }
+    function recoverStep2(){
+        var user=document.getElementById('recoverUser').value.trim();
+        var answer=document.getElementById('recoverAnswer').value.trim();
+        if(!answer){document.getElementById('recoverMsg2').textContent='请输入答案';document.getElementById('recoverMsg2').className='modal-msg err';return;}
+        var data=localStorage.getItem('bind_'+user);
+        if(!data){document.getElementById('recoverMsg2').textContent='绑定信息丢失';document.getElementById('recoverMsg2').className='modal-msg err';return;}
+        var bind=JSON.parse(data);
+        if(answer!==bind.answer){document.getElementById('recoverMsg2').textContent='答案错误';document.getElementById('recoverMsg2').className='modal-msg err';return;}
+        var html='';
+        if(bind.roomPass) html+='<div class="result-item"><div class="result-label">房间密码</div><div class="result-value">'+bind.roomPass+'</div></div>';
+        if(bind.inviteCode) html+='<div class="result-item"><div class="result-label">邀请码</div><div class="result-value">'+bind.inviteCode+'</div></div>';
+        if(bind.phone) html+='<div class="result-item"><div class="result-label">绑定手机</div><div class="result-value">'+bind.phone+'</div></div>';
+        if(bind.email) html+='<div class="result-item"><div class="result-label">绑定邮箱</div><div class="result-value">'+bind.email+'</div></div>';
+        if(!html) html='<div class="result-item">未找到绑定信息</div>';
+        document.getElementById('recoverResult').innerHTML=html;
+        document.getElementById('recoverStep2').style.display='none';
+        document.getElementById('recoverStep3').style.display='block';
+    }
+
+    // ============ 绑定账号 ============
+    document.getElementById('bindQuestion').addEventListener('change',function(){
+        document.getElementById('bindCustomQ').style.display=this.value==='custom'?'block':'none';
+    });
+    function loadBind(){
+        var user=localStorage.getItem('lastLoginUser');
+        if(!user) return;
+        var data=localStorage.getItem('bind_'+user);
+        var statusEl=document.getElementById('bindStatus');
+        if(data){
+            var bind=JSON.parse(data);
+            statusEl.innerHTML='<div class="bind-status bound">✅ 已绑定（'+user+'）</div>';
+            if(bind.phone) document.getElementById('bindPhone').value=bind.phone;
+            if(bind.email) document.getElementById('bindEmail').value=bind.email;
+            if(bind.question){
+                var sel=document.getElementById('bindQuestion');
+                var found=false;
+                for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===bind.question){sel.selectedIndex=i;found=true;break;}}
+                if(!found){sel.value='custom';document.getElementById('bindCustomQ').style.display='block';document.getElementById('bindCustomQ').value=bind.question;}
+            }
+            if(bind.answer) document.getElementById('bindAnswer').value=bind.answer;
+        } else {
+            statusEl.innerHTML='<div class="bind-status unbound">⚠️ 未绑定 — 建议绑定以保护你的账号</div>';
+        }
+    }
+    function saveBind(){
+        var user=localStorage.getItem('lastLoginUser');
+        var pass=localStorage.getItem('lastLoginPass');
+        var code=localStorage.getItem('lastLoginCode');
+        if(!user){showBindMsg('请先登录',true);return;}
+        var phone=document.getElementById('bindPhone').value.trim();
+        var email=document.getElementById('bindEmail').value.trim();
+        var question=document.getElementById('bindQuestion').value;
+        if(question==='custom') question=document.getElementById('bindCustomQ').value.trim();
+        var answer=document.getElementById('bindAnswer').value.trim();
+        if(!question){showBindMsg('请选择或输入密保问题',true);return;}
+        if(!answer){showBindMsg('请输入密保答案',true);return;}
+        var bind={phone:phone,email:email,question:question,answer:answer,roomPass:pass||'',inviteCode:code||''};
+        localStorage.setItem('bind_'+user,JSON.stringify(bind));
+        showBindMsg('绑定成功！',false);
+        loadBind();
+    }
+    function showBindMsg(text,isErr){
+        var el=document.getElementById('bindMsg');
+        el.textContent=text;
+        el.className='modal-msg'+(isErr?' err':' ok');
+        setTimeout(function(){el.textContent='';},3000);
     }
 
     // ============ 自动登录 ============
