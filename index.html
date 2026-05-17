@@ -423,56 +423,6 @@ footer .footer-warning { margin-top: 12px; font-size: 0.9rem; color: #ccc; }
             <h2 style="font-size:2.2rem;color:#e91e8c;margin-bottom:6px;">我们的小屋</h2>
             <div class="login-sub" style="font-size:1.1rem;color:#8b6f7e;margin-bottom:28px;">Enter our love space</div>
             <input type="text" id="loginUser" placeholder="你的名字" maxlength="20" autocomplete="username" style="width:100%;padding:14px 18px;border:2px solid #ffe4ec;border-radius:14px;font-size:1.05rem;color:#5a3e4b;background:#fff;outline:none;margin-bottom:14px;display:block;">
-            <input type="password" id="loginPass" placeholder="房间密码" maxlength="50" autocomplete="current-password" style="width:100%;padding:14px 18px;border:2px solid #ffe404;border-radius:14px;font-size:1.05rem;color:#5a3e4b;background:#fff;outline:none;margin-bottom:14px;display:block;">
-            <input type="text" id="loginCode" placeholder="邀请码" maxlength="50" autocomplete="off" style="width:100%;padding:14px 18px;border:2px solid #ffe4ec;border-radius:14px;font-size:1.05rem;color:#5a3e4b;background:#fff;outline:none;margin-bottom:14px;display:block;">
-            <div class="login-error" id="loginError" style="color:#e53935;font-size:0.9rem;min-height:20px;margin-top:8px;"></div>
-            <button class="login-btn" id="loginBtn" onclick="doLogin()" style="width:100%;padding:14px;border:none;border-radius:25px;background:linear-gradient(135deg,#ff69b4,#e91e8c);color:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;margin-top:6px;">💕 进入我们的小屋</button>
-            <div class="login-hint" style="margin-top:18px;font-size:0.85rem;color:#8b6f7e;">💡 输入邀请码和房间密码，开启属于你们的空间</div>
-            <div class="login-recover" style="margin-top:10px;font-size:0.85rem;"><a onclick="openRecover()" style="color:#ff69b4;cursor:pointer;text-decoration:underline;">🔑 找回账号</a></div>
-        </div>
-    </div>
-
-    <!-- 找回账号弹窗 -->
-    <div class="modal-overlay" id="recoverModal">
-        <div class="modal-box" style="position:relative;">
-            <button class="close-modal" onclick="closeRecover()">&times;</button>
-            <h3>🔑 找回账号</h3>
-            <!-- 步骤1：输入用户名 -->
-            <div id="recoverStep1">
-                <div class="modal-sub">输入你绑定时使用的用户名</div>
-                <input type="text" id="recoverUser" placeholder="你的名字" maxlength="20">
-                <div class="modal-msg" id="recoverMsg1"></div>
-                <div class="btn-row">
-                    <button class="btn-confirm" onclick="recoverStep1()">下一步</button>
-                </div>
-            </div>
-            <!-- 步骤2：回答密保问题 -->
-            <div id="recoverStep2" style="display:none;">
-                <div class="modal-sub" id="recoverQuestion"></div>
-                <input type="text" id="recoverAnswer" placeholder="请输入密保答案" maxlength="50">
-                <div class="modal-msg" id="recoverMsg2"></div>
-                <div class="btn-row">
-                    <button class="btn-confirm" onclick="recoverStep2()">验证</button>
-                    <button class="btn-cancel" onclick="recoverBack()">返回</button>
-                </div>
-            </div>
-            <!-- 步骤3：显示结果 -->
-            <div id="recoverStep3" style="display:none;">
-                <div class="modal-sub">✅ 验证成功，以下是你绑定的信息</div>
-                <div class="result-box" id="recoverResult"></div>
-                <div class="btn-row" style="margin-top:16px;">
-                    <button class="btn-confirm" onclick="closeRecover()">确定</button>
-                </div>
-            </div>
-<body>
-
-    <!-- 登录页 -->
-    <div id="login-page" style="min-height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#fff0f5,#ffe0eb,#ffd1dc,#ffe4ec);padding:20px;">
-        <div class="login-card" style="background:#fff;padding:48px 40px;border-radius:24px;max-width:420px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(233,30,140,0.15);">
-            <div class="login-heart" style="font-size:4rem;margin-bottom:12px;">💕</div>
-            <h2 style="font-size:2.2rem;color:#e91e8c;margin-bottom:6px;">我们的小屋</h2>
-            <div class="login-sub" style="font-size:1.1rem;color:#8b6f7e;margin-bottom:28px;">Enter our love space</div>
-            <input type="text" id="loginUser" placeholder="你的名字" maxlength="20" autocomplete="username" style="width:100%;padding:14px 18px;border:2px solid #ffe4ec;border-radius:14px;font-size:1.05rem;color:#5a3e4b;background:#fff;outline:none;margin-bottom:14px;display:block;">
             <input type="password" id="loginPass" placeholder="房间密码" maxlength="50" autocomplete="current-password" style="width:100%;padding:14px 18px;border:2px solid #ffe4ec;border-radius:14px;font-size:1.05rem;color:#5a3e4b;background:#fff;outline:none;margin-bottom:14px;display:block;">
             <input type="text" id="loginCode" placeholder="邀请码" maxlength="50" autocomplete="off" style="width:100%;padding:14px 18px;border:2px solid #ffe4ec;border-radius:14px;font-size:1.05rem;color:#5a3e4b;background:#fff;outline:none;margin-bottom:14px;display:block;">
             <div class="login-error" id="loginError" style="color:#e53935;font-size:0.9rem;min-height:20px;margin-top:8px;"></div>
